@@ -21,6 +21,7 @@ class Entidad extends Model
         'nombre',
         'tipo',
         'fecha_registro',
+        'ubigeo',
         'anio',
     ];
 

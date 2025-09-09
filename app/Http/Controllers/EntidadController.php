@@ -13,12 +13,29 @@ class EntidadController extends Controller
         return Entidad::all();
     }
 
-    public function store(Request $request)
+    public function store(EntidadStoreRequest $request)
     {
-        $data = $request->json();
+        $data = $request->all();
         $entidad = new Entidad();
         $entidad->fill($data);
         $entidad->save();
+        return $entidad;
+    }
+
+    public function show(Entidad $entidad)
+    {
+        return $entidad;
+    }
+
+    public function update(EntidadStoreRequest $request, Entidad $entidad)
+    {
+        $entidad->update($request->all());
+        return $entidad;
+    }
+
+    public function destroy(Entidad $entidad)
+    {
+        $entidad->delete();
         return $entidad;
     }
 }
