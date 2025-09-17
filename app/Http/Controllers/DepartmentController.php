@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\UbigeoPeruDepartment;
-use Illuminate\Http\Request;
+use App\Models\Depa;
 
 class DepartmentController extends Controller
 {
     public function index()
     {
-        return UbigeoPeruDepartment::all();
+        return Depa::all();
     }
 }

@@ -13,8 +13,6 @@ class User extends Authenticatable implements JWTSubject
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    protected $primaryKey = 'id_usuario';
-    protected $table = 'Usuarios';
     public $timestamps = false;
 
     /**
@@ -26,6 +24,7 @@ class User extends Authenticatable implements JWTSubject
         'nombre',
         'email',
         'password',
+        'id_role'
     ];
 
     /**
@@ -68,6 +67,16 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'user' => [
+                'role' => $this->id_role,
+                'nombre' => $this->nombre,
+                'email' => $this->email,
+                'userName' => $this->nombre,
+                'userId' => null,
+                'avatar' => null,
+                'authority' => $this->id_role == 1 ? ['admin'] : ['user'],
+            ],
+        ];
     }
 }
