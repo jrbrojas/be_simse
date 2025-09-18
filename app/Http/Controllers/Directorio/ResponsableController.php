@@ -9,6 +9,7 @@ use App\Models\Directorio\CategoriaResponsable;
 use App\Models\Directorio\Responsable;
 use App\Http\Requests\Directorio\ResponsableStoreRequest;
 use App\Models\Directorio\RolResponsable;
+use Illuminate\Http\Request;
 
 class ResponsableController extends Controller
 {
@@ -29,9 +30,20 @@ class ResponsableController extends Controller
         return CargoResponsable::all();
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return Responsable::all();
+        return Responsable::query()
+            ->select(
+                'responsables.*',
+                'roles_responsables.nombre as rol',
+                'cargos_responsables.nombre as cargo',
+            )
+            ->when($request->get('id_entidad'), function ($query, $id) {
+                $query->where('id_entidad', $id);
+            })
+            ->leftJoin('roles_responsables', 'responsables.id_rol', '=', 'roles_responsables.id')
+            ->leftJoin('cargos_responsables', 'responsables.id_cargo', '=', 'cargos_responsables.id')
+            ->get();
     }
 
     public function store(ResponsableStoreRequest $request)

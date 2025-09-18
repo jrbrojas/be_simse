@@ -26,9 +26,20 @@ class DirectorioController extends Controller
             ->groupBy('r.ubigeo')
             ->pluck('id');
         $responsables = Responsable::query()
-            ->select('responsables.*', 'ubigeo.ubigeo', 'entidades.nombre as nombre_entidad')
+            ->select(
+                'responsables.*',
+                'ubigeo.ubigeo',
+                'entidades.nombre as nombre_entidad',
+                'depas.nombdpto as departamento',
+                'provs.nombprov as provincia',
+                'ubigeo.nombdist as distrito',
+                'categorias_responsables.nombre as categoria',
+            )
+            ->leftJoin('categorias_responsables', 'responsables.id_categoria', '=', 'categorias_responsables.id')
             ->leftJoin('ubigeo', 'responsables.ubigeo', '=', 'ubigeo.ubigeo')
             ->leftJoin('entidades', 'responsables.id_entidad', '=', 'entidades.id_entidad')
+            ->leftJoin('depas', 'responsables.id_departamento', '=', 'depas.iddpto')
+            ->leftJoin('provs', 'responsables.id_provincia', '=', 'provs.idprov')
             ->whereIn('responsables.id', $latestIds)
             ->get();
         return $responsables;
