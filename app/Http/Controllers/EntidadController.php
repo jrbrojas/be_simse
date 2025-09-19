@@ -8,9 +8,12 @@ use Illuminate\Http\Request;
 
 class EntidadController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Entidad::all();
+        return Entidad::query()
+            ->when($request->get('ubigeo'), function ($query, $ubigeo) {
+                $query->where('ubigeo', $ubigeo);
+            })->get();
     }
 
     public function store(EntidadStoreRequest $request)

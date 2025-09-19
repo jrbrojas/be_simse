@@ -43,6 +43,7 @@ class ResponsableController extends Controller
             })
             ->leftJoin('roles_responsables', 'responsables.id_rol', '=', 'roles_responsables.id')
             ->leftJoin('cargos_responsables', 'responsables.id_cargo', '=', 'cargos_responsables.id')
+            ->orderBy('responsables.fecha_fin', 'DESC')
             ->get();
     }
 
@@ -60,16 +61,21 @@ class ResponsableController extends Controller
         return $entidad;
     }
 
-    public function update(ResponsableStoreRequest $request, Responsable $entidad)
+    public function update(ResponsableStoreRequest $request, Responsable $responsable)
     {
         $data = $request->all();
-        $ids = $this->getDataUbicacion($data['id_entidad'])['ids'];
+        //$ids = $this->getDataUbicacion($data['id_entidad'])['ids'];
+        $ids = [
+            'id_entidad' => $request->get("id_entidad"),
+            'id_departemento' => $request->get("id_departamento"),
+            'id_provincia' => $request->get("id_provincia"),
+            'ubigeo' => $request->get("ubigeo"),
+        ];
         $data['id_departemento'] = $ids['id_departemento'];
-        $data['id_distrito'] = $ids['id_distrito'];
         $data['id_provincia'] = $ids['id_provincia'];
-        $data['ubigeo'] = 0; //$ids['ubigeo'];
-        $entidad->update($data);
-        return $entidad;
+        $data['ubigeo'] = $ids['ubigeo'];
+        $responsable->update($data);
+        return $responsable;
     }
 
     public function destroy(Responsable $entidad)
