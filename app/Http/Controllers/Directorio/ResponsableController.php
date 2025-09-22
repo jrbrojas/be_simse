@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\DataUbicacion;
 use App\Models\Directorio\CargoResponsable;
 use App\Models\Directorio\CategoriaResponsable;
+use App\Models\Directorio\EntidadRegistrada;
 use App\Models\Directorio\Responsable;
 use App\Http\Requests\Directorio\ResponsableStoreRequest;
 use App\Models\Directorio\RolResponsable;
@@ -50,6 +51,11 @@ class ResponsableController extends Controller
     public function store(ResponsableStoreRequest $request)
     {
         $data = $request->all();
+        $first = EntidadRegistrada::firstOrNew(['entidad_id' => $data['id_entidad']]);
+        $first->categoria_id = $data['id_categoria'];
+        $first->fecha_registro = $data['fecha_registro'];
+        $first->save();
+
         $entidad = new Responsable();
         $entidad->fill($data);
         $entidad->save();

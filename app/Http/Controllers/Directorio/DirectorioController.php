@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Directorio;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\DataUbicacion;
+use App\Models\Directorio\EntidadRegistrada;
 use App\Models\Directorio\Responsable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,11 @@ use Illuminate\Support\Facades\DB;
 class DirectorioController extends Controller
 {
     use DataUbicacion;
+
+    public function entidades()
+    {
+        return EntidadRegistrada::all();
+    }
 
     public function index()
     {
@@ -30,14 +36,14 @@ class DirectorioController extends Controller
                 'responsables.*',
                 'ubigeo.ubigeo',
                 'entidades.nombre as nombre_entidad',
-                'depas.nombdpto as departamento',
-                'provs.nombprov as provincia',
-                'ubigeo.nombdist as distrito',
+                'depas.nombre as departamento',
+                'provs.nombre as provincia',
+                'ubigeo.distrito as distrito',
                 'categorias_responsables.nombre as categoria',
             )
             ->leftJoin('categorias_responsables', 'responsables.id_categoria', '=', 'categorias_responsables.id')
             ->leftJoin('ubigeo', 'responsables.ubigeo', '=', 'ubigeo.ubigeo')
-            ->leftJoin('entidades', 'responsables.id_entidad', '=', 'entidades.id_entidad')
+            ->leftJoin('entidades', 'responsables.id_entidad', '=', 'entidades.id')
             ->leftJoin('depas', 'responsables.id_departamento', '=', 'depas.iddpto')
             ->leftJoin('provs', 'responsables.id_provincia', '=', 'provs.idprov')
             ->whereIn('responsables.id', $latestIds)
