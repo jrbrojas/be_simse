@@ -20,6 +20,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::resource('/distritos', \App\Http\Controllers\DistritoController::class)->only('index');
     Route::resource('/provincias', \App\Http\Controllers\ProvinciaController::class)->only('index');
 
+    // directorio
     Route::get('/directorio', [\App\Http\Controllers\Directorio\DirectorioController::class, 'index']);
     Route::get('/directorio/entidades_registradas', [\App\Http\Controllers\Directorio\DirectorioController::class, 'entidades']);
     Route::resource('/directorio/responsables', \App\Http\Controllers\Directorio\ResponsableController::class)->except('create', 'edit');
@@ -27,11 +28,18 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::get('/directorio/roles', [\App\Http\Controllers\Directorio\ResponsableController::class, 'roles']);
     Route::get('/directorio/cargos', [\App\Http\Controllers\Directorio\ResponsableController::class, 'cargos']);
 
+    // monitoreo
+    Route::get('/monitoreo/respuestas', [\App\Http\Controllers\Monitoreo\RespuestaController::class, 'index']);
+    Route::post('/monitoreo/respuestas', [\App\Http\Controllers\Monitoreo\RespuestaController::class, 'store']);
+
     //Route::resource('/monitoreo/respuestas', \App\Http\Controllers\Monitoreo\RespuestaController::class)->except('create', 'edit');
     //Route::resource('/seguimiento/respuestas', \App\Http\Controllers\Seguimiento\RespuestaController::class)->except('create', 'edit');
     //Route::resource('/supervision/respuestas', \App\Http\Controllers\Supervision\RespuestaController::class)->except('create', 'edit');
     //Route::get('/evaluacion/resumen', [\App\Http\Controllers\Evaluacion\ResumenController::class, 'resumen'])->name('evaluacion.resumen');
 
+});
+Route::group(['prefix' => 'v1'], function () {
+    //Route::post('/monitoreo/respuestas', [\App\Http\Controllers\Monitoreo\RespuestaController::class, 'store']);
 });
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
