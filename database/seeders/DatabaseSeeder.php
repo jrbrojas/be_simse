@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UbigeoImportSeeder::class,
             EntidadesImportSeeder::class,
             RolesSeeder::class,
+            UserSeeder::class,
             CargosResponsablesSeeder::class,
             CategoriasResponsablesSeeder::class,
             RolesResponsablesSeeder::class,

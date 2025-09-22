@@ -29,6 +29,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::get('/directorio/cargos', [\App\Http\Controllers\Directorio\ResponsableController::class, 'cargos']);
 
     // monitoreo
+    Route::get('/monitoreo', [\App\Http\Controllers\Monitoreo\MonitoreoController::class, 'index']);
     Route::get('/monitoreo/respuestas', [\App\Http\Controllers\Monitoreo\RespuestaController::class, 'index']);
     Route::post('/monitoreo/respuestas', [\App\Http\Controllers\Monitoreo\RespuestaController::class, 'store']);
 
