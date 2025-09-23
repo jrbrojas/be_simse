@@ -19,14 +19,14 @@ class UserSeeder extends Seeder
         $u->name = "Admin";
         $u->password = 'secret@1234';
         $u->email = "admin@simse.com";
-        $u->id_rol = 1;
+        $u->id_role = 1;
         $u->save();
 
         $u = new User();
         $u->name = "Usuario";
         $u->password = 'secret@1234';
         $u->email = "usuario@simse.com";
-        $u->id_rol = 2;
+        $u->id_role = 2;
         $u->save();
     }
 }

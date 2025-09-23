@@ -44,4 +44,9 @@ class Entidad extends Model
             'fecha_registro' => 'date',
         ];
     }
+
+    public function distrito()
+    {
+        return $this->belongsTo(Ubigeo::class, 'ubigeo', 'ubigeo');
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models\Directorio;
 
+use App\Models\Entidad;
 use Illuminate\Database\Eloquent\Model;
 
 class EntidadRegistrada extends Model
@@ -12,4 +13,14 @@ class EntidadRegistrada extends Model
         "categoria_id",
         "fecha_registro",
     ];
+
+    public function entidad()
+    {
+        return $this->belongsTo(Entidad::class);
+    }
+
+    public function categoria()
+    {
+        return $this->belongsTo(CategoriaResponsable::class, "categoria_id", "id");
+    }
 }

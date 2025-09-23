@@ -37,7 +37,7 @@ class ResponsableStoreRequest extends FormRequest
             'id_departamento' => 'required|exists:depas,iddpto',
             'id_provincia' => 'required|exists:provs,idprov',
             'id_entidad' => 'required',
-            'ubigeo' => 'required|integer',
+            'ubigeo' => 'required|exists:ubigeo,ubigeo',
         ];
     }
 }

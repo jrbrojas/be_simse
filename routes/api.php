@@ -23,6 +23,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     // directorio
     Route::get('/directorio', [\App\Http\Controllers\Directorio\DirectorioController::class, 'index']);
     Route::get('/directorio/entidades_registradas', [\App\Http\Controllers\Directorio\DirectorioController::class, 'entidades']);
+    Route::get('/directorio/entidades_registradas/{entidad}', [\App\Http\Controllers\Directorio\DirectorioController::class, 'getEntidad']);
     Route::resource('/directorio/responsables', \App\Http\Controllers\Directorio\ResponsableController::class)->except('create', 'edit');
     Route::get('/directorio/categorias', [\App\Http\Controllers\Directorio\ResponsableController::class, 'categorias']);
     Route::get('/directorio/roles', [\App\Http\Controllers\Directorio\ResponsableController::class, 'roles']);

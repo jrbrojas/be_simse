@@ -32,10 +32,10 @@ return new class extends Migration
             $table->unsignedBigInteger('id_rol');
             $table->foreign('id_rol')->references('id')->on('roles_responsables');
 
-            $table->unsignedBigInteger('id_departamento');
-            $table->unsignedBigInteger('id_provincia');
+            $table->string('id_departamento');
+            $table->string('id_provincia');
             $table->unsignedBigInteger('id_entidad');
-            $table->unsignedBigInteger('ubigeo');
+            $table->string('ubigeo');
 
             //$table->foreign('id_departamento')->references('id')->on('departamentos');
             //$table->foreign('id_distrito')->references('id')->on('distritos');

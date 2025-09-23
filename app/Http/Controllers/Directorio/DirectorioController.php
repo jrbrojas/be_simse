@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\DataUbicacion;
 use App\Models\Directorio\EntidadRegistrada;
 use App\Models\Directorio\Responsable;
+use App\Models\Entidad;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,9 +14,15 @@ class DirectorioController extends Controller
 {
     use DataUbicacion;
 
+    public function getEntidad(int $entidad)
+    {
+        $e = EntidadRegistrada::query()->with(['entidad', 'categoria'])->where('entidad_id', $entidad)->firstOrFail();
+        return $e;
+    }
+
     public function entidades()
     {
-        return EntidadRegistrada::all();
+        return EntidadRegistrada::with(['entidad.distrito', 'categoria'])->get();
     }
 
     public function index()
