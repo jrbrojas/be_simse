@@ -33,6 +33,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::get('/monitoreo', [\App\Http\Controllers\Monitoreo\MonitoreoController::class, 'index']);
     Route::get('/monitoreo/respuestas', [\App\Http\Controllers\Monitoreo\RespuestaController::class, 'index']);
     Route::post('/monitoreo/respuestas', [\App\Http\Controllers\Monitoreo\RespuestaController::class, 'store']);
+    Route::get('/monitoreo/entidades_registradas/{entidad}', [\App\Http\Controllers\Monitoreo\EntidadRegistradaController::class, 'getEntidad']);
 
     //Route::resource('/monitoreo/respuestas', \App\Http\Controllers\Monitoreo\RespuestaController::class)->except('create', 'edit');
     //Route::resource('/seguimiento/respuestas', \App\Http\Controllers\Seguimiento\RespuestaController::class)->except('create', 'edit');

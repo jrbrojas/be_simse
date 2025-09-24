@@ -8,12 +8,22 @@ use App\Models\Monitoreo\EntidadRegistrada;
 use App\Models\Monitoreo\RespuestasPreguntas;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class MonitoreoController extends Controller
 {
     public function index()
     {
-        return EntidadRegistrada::with(['entidad', 'respuestas'])->get();
+        $ids = EntidadRegistrada::query()
+            ->select(DB::raw('MAX(id) as max_id'))
+            ->groupBy('entidad_id')
+            ->get();
+        $ids = $ids->pluck('max_id')->toArray();
+        return EntidadRegistrada::with(['entidad', 'respuestas',
+            'departamento',
+            'provincia',
+            'distrito'
+        ])->whereIn('id', $ids)->get();
     }
 }

@@ -17,9 +17,9 @@ return new class extends Migration
             $table->foreign('entidad_id')->references('id')->on('entidades');
             $table->unsignedBigInteger('categoria_responsable_id');
             $table->foreign('categoria_responsable_id')->references('id')->on('categorias_responsables');
-            $table->unsignedBigInteger('ubigeo');
-            $table->unsignedBigInteger('provincia_idprov');
-            $table->unsignedBigInteger('departamento_iddpto');
+            $table->string('ubigeo');
+            $table->string('provincia_idprov');
+            $table->string('departamento_iddpto');
             $table->integer('anio');
 
             // informacion general
