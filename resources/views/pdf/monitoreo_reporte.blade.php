@@ -35,7 +35,7 @@
         <td style="width:25%; text-align:left; vertical-align:top;">
             @php $logoPath = public_path('img/logo.png'); @endphp
             @if(file_exists($logoPath))
-                <img src="{{ $logoPath }}" alt="Logo" style="width:80px;">
+                <img src="{{ $logoPath }}" alt="Logo" style="width:100px;">
             @else
                 <div style="color:#999;">[LOGO]</div>
             @endif
@@ -127,7 +127,19 @@
                     <td>
                         @if($resp->files && $resp->files->count())
                             @foreach($resp->files as $file)
-                                <div><a href="{{ $file->path }}">{{ $file->description ?? $file->name }}</a></div>
+                            <div>
+                                    @php
+                                        // Construir la URL pública a partir del path
+                                        $url = asset('storage/'.$file->path);
+                                    @endphp
+
+                                    {{-- Mostrar descripción si existe, sino el nombre --}}
+                                    <a href="{{ $url }}" target="_blank">
+                                        {{ $file->description ?? basename($file->path) }}
+                                    </a>
+                                    <br>
+                                    <small style="color:#666;">{{ $url }}</small>
+                            </div>
                             @endforeach
                         @else
                             -
