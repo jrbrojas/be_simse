@@ -35,6 +35,9 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::post('/monitoreo/respuestas', [\App\Http\Controllers\Monitoreo\RespuestaController::class, 'store']);
     Route::get('/monitoreo/entidades_registradas/{entidad}', [\App\Http\Controllers\Monitoreo\EntidadRegistradaController::class, 'getEntidad']);
 
+    // nueva ruta pdf
+    Route::get('/monitoreo/entidades_registradas/{entidad}/pdf', [\App\Http\Controllers\Monitoreo\EntidadRegistradaController::class, 'exportPdf'])->name('monitoreo.entidad.pdf');
+
     //Route::resource('/monitoreo/respuestas', \App\Http\Controllers\Monitoreo\RespuestaController::class)->except('create', 'edit');
     //Route::resource('/seguimiento/respuestas', \App\Http\Controllers\Seguimiento\RespuestaController::class)->except('create', 'edit');
     //Route::resource('/supervision/respuestas', \App\Http\Controllers\Supervision\RespuestaController::class)->except('create', 'edit');
