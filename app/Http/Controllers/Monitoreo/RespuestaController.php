@@ -57,24 +57,26 @@ class RespuestaController extends Controller
             $r->monitoreo_entidad_registrada_id = $er->id;
             $r->save();
 
-            $data = [];
-            foreach ($respuesta["files"] as $item) {
-                $file = $item["file"];
-                $descripcion = $item["descripcion"];
+            if (array_key_exists('files', $respuesta)) {
+                $data = [];
+                foreach ($respuesta["files"] as $item) {
+                    $file = $item["file"];
+                    $descripcion = $item["descripcion"];
 
-                $data[] = [
-                    'name' => $file->getClientOriginalName(),
-                    'path' => $this->guardarArchivo($file),
-                    'disk' => 'local',
-                    'size' => $file->getSize(),
-                    'mime_type' => $file->getClientMimeType(),
-                    'description' => $descripcion,
-                    'extra' => json_encode(compact('descripcion')),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
+                    $data[] = [
+                        'name' => $file->getClientOriginalName(),
+                        'path' => $this->guardarArchivo($file),
+                        'disk' => 'local',
+                        'size' => $file->getSize(),
+                        'mime_type' => $file->getClientMimeType(),
+                        'description' => $descripcion,
+                        'extra' => json_encode(compact('descripcion')),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+                $r->files()->createMany($data);
             }
-            $r->files()->createMany($data);
         }
 
         return $er;

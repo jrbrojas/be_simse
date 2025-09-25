@@ -36,7 +36,19 @@ class EntidadRegistradaController extends Controller
         ->setPaper('a4', 'portrait');
 
         return $pdf->stream("reporte_entidad_{$entidad}.pdf");
-}
+    }
 
+    public function historial(EntidadRegistrada $entidad)
+    {
+        return EntidadRegistrada::query()
+            ->where('entidad_id', $entidad->entidad_id)
+            ->get()
+            ->map(function(EntidadRegistrada $e){
+                return [
+                    "id" => $e->id,
+                    "fecha_registrada" => $e->created_at->format('Y-m-d'),
+                ];
+            });
+    }
 }
 
