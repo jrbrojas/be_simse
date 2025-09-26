@@ -77,7 +77,7 @@
             </td>
             <td style="width:25%;">
                 <div class="label">DISTRITO</div>
-                <div class="value">{{ $data->distrito->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->distrito->distrito ?? '-' }}</div>
             </td>
             <td style="width:25%;">
                 <div class="label">UBIGEO</div>

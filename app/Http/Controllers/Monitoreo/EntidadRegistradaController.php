@@ -51,8 +51,9 @@ class EntidadRegistradaController extends Controller
     {
         return EntidadRegistrada::query()
             ->where('entidad_id', $entidad->entidad_id)
+            ->orderBy('id', 'desc')
             ->get()
-            ->map(function(EntidadRegistrada $e){
+            ->map(function (EntidadRegistrada $e) {
                 return [
                     "id" => $e->id,
                     "fecha_registrada" => $e->created_at->format('Y-m-d'),
