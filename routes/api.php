@@ -39,7 +39,9 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     // nueva ruta pdf
     Route::get('/monitoreo/entidades_registradas/{entidad}/pdf', [\App\Http\Controllers\Monitoreo\EntidadRegistradaController::class, 'exportPdf'])->name('monitoreo.entidad.pdf');
 
-    //
+    // seguimiento
+    Route::get('/seguimiento', [\App\Http\Controllers\Seguimiento\SeguimientoController::class, 'index']);
+    Route::get('/seguimiento/{id}', [\App\Http\Controllers\Seguimiento\SeguimientoController::class, 'show']);
     Route::get('/seguimiento/entidades_registradas/{entidad}', [\App\Http\Controllers\Seguimiento\EntidadRegistradaController::class, 'getEntidad']);
     Route::post('/seguimiento/respuestas', [\App\Http\Controllers\Seguimiento\RespuestaController::class, 'store']);
 

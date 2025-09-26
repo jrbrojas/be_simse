@@ -16,6 +16,18 @@ class EntidadRegistrada extends Model
 {
     protected $table = 'seguimiento_entidad_registrada';
 
+    // Campos permitidos para asignación masiva
+    protected $fillable = [
+        'entidad_id',
+        'categoria_responsable_id',
+        'ubigeo',
+        'provincia_idprov',
+        'departamento_iddpto',
+        'anio',
+        'aprobado',
+        'instrumento',
+    ];
+
     /**
      * @return MorphOne<File>
      */
@@ -32,13 +44,11 @@ class EntidadRegistrada extends Model
         return $this->belongsTo(Entidad::class);
     }
 
-    /*
     public function respuestas()
     {
         return $this->hasMany(RespuestasPreguntas::class, 'seguimiento_entidad_registrada_id');
     }
-    */
-
+    
     /**
      * @return BelongsTo<CategoriaResponsable>
      */

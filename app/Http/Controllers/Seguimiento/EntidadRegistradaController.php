@@ -10,6 +10,7 @@ class EntidadRegistradaController extends Controller
 {
     public function getEntidad(int $entidad)
     {
+        // Traemos la entidad registrada con todas sus relaciones
         $e = EntidadRegistrada::query()
             ->with([
                 'entidad',
@@ -17,36 +18,29 @@ class EntidadRegistradaController extends Controller
                 'departamento',
                 'provincia',
                 'distrito',
+                'file',
             ])
             ->where('id', $entidad)
             ->firstOrFail();
-        return $e;
+
+        return response()->json([
+            "id" => $e->id,
+            "entidad" => $e->entidad->nombre ?? null,
+            "categoria" => $e->categoria->nombre ?? null,
+            "departamento" => $e->departamento->nombre ?? null,
+            "provincia" => $e->provincia->nombre ?? null,
+            "distrito" => $e->distrito->nombre ?? null,
+            "ubigeo" => $e->ubigeo,
+            "anio" => $e->anio,
+            "instrumento" => $e->instrumento,
+            "aprobado" => $e->aprobado,
+            "file" => $e->file ? [
+                "path" => $e->file->path,
+                "url" => asset("storage/" . $e->file->path),
+            ] : null,
+            "created_at" => $e->created_at->format('Y-m-d H:i:s'),
+        ]);
     }
-
-    /*
-    public function exportPdf(int $entidad)
-    {
-        $data = EntidadRegistrada::with([
-            'entidad',
-            'categoria',
-            'departamento',
-            'provincia',
-            'distrito',
-            'respuestas'
-        ])->findOrFail($entidad);
-
-        // agrupamos las respuestas por OP
-        $respuestasAgrupadas = $data->respuestas->groupBy('op');
-
-        $pdf = Pdf::loadView('pdf.monitoreo_reporte', [
-            'data' => $data,
-            'respuestasAgrupadas' => $respuestasAgrupadas
-        ])
-        ->setPaper('a4', 'portrait');
-
-        return $pdf->stream("reporte_entidad_{$entidad}.pdf");
-    }
-    */
 
     public function historial(EntidadRegistrada $entidad)
     {
@@ -56,6 +50,9 @@ class EntidadRegistradaController extends Controller
             ->map(function (EntidadRegistrada $e) {
                 return [
                     "id" => $e->id,
+                    "anio" => $e->anio,
+                    "instrumento" => $e->instrumento,
+                    "aprobado" => $e->aprobado,
                     "fecha_registrada" => $e->created_at->format('Y-m-d'),
                 ];
             });
