@@ -29,6 +29,18 @@ class RespuestaController extends Controller
         return $url;
     }
 
+    public function guardarArchivoER(EntidadRegistrada $er, ?UploadedFile $file): string
+    {
+        if (null === $file) {
+            return "";
+        }
+        $name = $file->getClientOriginalName();
+        $unixtime = time();
+        $url = "monitoreo/{$er->id}/{$unixtime}-{$name}";
+        Storage::disk('local')->put($url, file_get_contents($file));
+        return $url;
+    }
+
     public function store(RespuestaStore $request)
     {
         $er = new EntidadRegistrada();
@@ -44,6 +56,22 @@ class RespuestaController extends Controller
         $er->n_personas_grd = $request->n_personas_grd;
         $er->save();
 
+        if ($request->archivo) {
+            $file = $request->archivo;
+            $archivo = [
+                'name' => $file->getClientOriginalName(),
+                'path' => $this->guardarArchivoER($er, $file),
+                'disk' => 'local',
+                'size' => $file->getSize(),
+                'mime_type' => $file->getClientMimeType(),
+                'description' => "",
+                'extra' => json_encode([]),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+            $er->file()->create($archivo);
+        }
+
         foreach ($request->respuestas as $respuesta) {
             $r = new RespuestasPreguntas();
             $r->codigo = $respuesta['codigo'];
@@ -51,9 +79,13 @@ class RespuestaController extends Controller
             $r->titulo = $respuesta['titulo'];
             $r->pregunta = $respuesta['pregunta'];
             $r->type = $respuesta['type'];
-            $r->respuesta = $respuesta['respuesta'];
-            $r->cantidad_evidencias = $respuesta['cantidad_evidencias'];
-            $r->porcentaje = $respuesta['porcentaje'];
+            $r->respuesta = strtolower($respuesta['respuesta']);
+            $r->cantidad_evidencias = "0";
+            $r->porcentaje = "0";
+            if ($r->respuesta == 'si') {
+                $r->cantidad_evidencias = $respuesta['cantidad_evidencias'];
+                $r->porcentaje = $respuesta['porcentaje'];
+            }
             $r->monitoreo_entidad_registrada_id = $er->id;
             $r->save();
 

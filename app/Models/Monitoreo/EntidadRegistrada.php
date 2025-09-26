@@ -5,13 +5,23 @@ namespace App\Models\Monitoreo;
 use App\Models\Depa;
 use App\Models\Directorio\CategoriaResponsable;
 use App\Models\Entidad;
+use App\Models\File;
 use App\Models\Prov;
 use App\Models\Ubigeo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class EntidadRegistrada extends Model
 {
     protected $table = 'monitoreo_entidad_registrada';
+
+    /**
+     * @return MorphOne<File>
+     */
+    public function file()
+    {
+        return $this->morphOne(File::class, 'fileable');
+    }
 
     public function entidad()
     {

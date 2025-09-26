@@ -130,7 +130,7 @@
                             <div>
                                     @php
                                         // Construir la URL pública a partir del path
-                                        $url = asset('storage/'.$file->path);
+                                        $url = url('/files/' . $file->id);
                                     @endphp
 
                                     {{-- Mostrar descripción si existe, sino el nombre --}}

@@ -33,6 +33,7 @@ class RespuestaStore extends FormRequest
             'sustento' => 'required',
             'n_personas_en_la_instancia' => 'required',
             'n_personas_grd' => 'required',
+            'archivo' => 'nullable|file',
 
             // formulario de la derecha
             'respuestas' => 'required',
