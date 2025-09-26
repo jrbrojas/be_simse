@@ -123,7 +123,7 @@
                     <td>{{ $resp->codigo ?? '-' }}</td>
                     <td>{{ $resp->pregunta ?? '-' }}</td>
                     <td>{{ $resp->respuesta ?? '-' }}</td>
-                    <td>{{ $resp->cantidad_evidencias ?? '-' }}</td>
+                    <td>{{ strtoupper($resp->evidencia) ?? '-' }}</td>
                     <td>
                         @if($resp->files && $resp->files->count())
                             @foreach($resp->files as $file)

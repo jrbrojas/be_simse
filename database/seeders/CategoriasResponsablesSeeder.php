@@ -16,6 +16,7 @@ class CategoriasResponsablesSeeder extends Seeder
     public function run(): void
     {
         $data = [
+            ['nombre' => 'Entidades del Poder Legislativo'],
             ['nombre' => 'Ministerios'],
             ['nombre' => 'Gobiernos Regionales'],
             ['nombre' => 'Gobiernos Provinciales'],

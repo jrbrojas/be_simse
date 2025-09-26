@@ -39,15 +39,12 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     // nueva ruta pdf
     Route::get('/monitoreo/entidades_registradas/{entidad}/pdf', [\App\Http\Controllers\Monitoreo\EntidadRegistradaController::class, 'exportPdf'])->name('monitoreo.entidad.pdf');
 
+    //
+    Route::get('/seguimiento/entidades_registradas/{entidad}', [\App\Http\Controllers\Seguimiento\EntidadRegistradaController::class, 'getEntidad']);
+    Route::post('/seguimiento/respuestas', [\App\Http\Controllers\Seguimiento\RespuestaController::class, 'store']);
+
     //Route::resource('/monitoreo/respuestas', \App\Http\Controllers\Monitoreo\RespuestaController::class)->except('create', 'edit');
     //Route::resource('/seguimiento/respuestas', \App\Http\Controllers\Seguimiento\RespuestaController::class)->except('create', 'edit');
     //Route::resource('/supervision/respuestas', \App\Http\Controllers\Supervision\RespuestaController::class)->except('create', 'edit');
     //Route::get('/evaluacion/resumen', [\App\Http\Controllers\Evaluacion\ResumenController::class, 'resumen'])->name('evaluacion.resumen');
-
 });
-Route::group(['prefix' => 'v1'], function () {
-    //Route::post('/monitoreo/respuestas', [\App\Http\Controllers\Monitoreo\RespuestaController::class, 'store']);
-});
-//Route::get('/user', function (Request $request) {
-//    return $request->user();
-//})->middleware('auth:sanctum');
