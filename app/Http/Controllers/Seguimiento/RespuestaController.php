@@ -40,7 +40,7 @@ class RespuestaController extends Controller
                         'size' => $file->getSize(),
                         'mime_type' => $file->getClientMimeType(),
                         'descripcion' => $uploadedFile['descripcion'] ?? null,
-                        'aprobado' => $uploadedFile['aprobado'] ?? false,
+                        'aprobado' => ($uploadedFile['aprobado'] ?? 'no') === 'si' ? 'si' : 'no',
                     ]);
                 }
             }

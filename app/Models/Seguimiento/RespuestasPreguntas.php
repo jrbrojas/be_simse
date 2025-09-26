@@ -24,11 +24,11 @@ class RespuestasPreguntas extends Model
 
     /**
      * Relación con archivos adjuntos
-     * @return MorphMany<File>
+     * @return MorphMany<SeguimientoFile>
      */
     public function files()
     {
-        return $this->morphMany(File::class, 'fileable');
+        return $this->morphMany(SeguimientoFile::class, 'fileable');
     }
 }
 

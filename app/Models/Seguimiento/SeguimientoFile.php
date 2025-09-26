@@ -5,7 +5,7 @@ namespace App\Models\Seguimiento;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class File extends Model
+class SeguimientoFile extends Model
 {
     protected $table = 'seguimiento_files';
 

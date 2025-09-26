@@ -13,8 +13,6 @@ return new class extends Migration
 
             // Relación polimórfica (puede usarse en respuestas u otros)
             $table->morphs('fileable'); // genera fileable_id y fileable_type
-
-            $table->boolean('aprobado')->default(false);     // si el instrumento fue aprobado
             $table->string('name');
             $table->string('path');
             $table->string('disk')->default('local');
@@ -24,9 +22,7 @@ return new class extends Migration
             // campos específicos de seguimiento
             $table->string('descripcion')->nullable();
             $table->enum('aprobado', ['si', 'no'])->default('no');
-
             $table->json('extra')->nullable();
-
             $table->timestamps();
         });
     }
