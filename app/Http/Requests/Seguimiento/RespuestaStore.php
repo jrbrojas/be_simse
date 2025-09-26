@@ -28,6 +28,7 @@ class RespuestaStore extends FormRequest
             'provincia_idprov' => 'required',
             'departamento_iddpto' => 'required',
             'anio' => 'required',
+            'respuestas' => 'required',
         ];
     }
 }

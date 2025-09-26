@@ -43,6 +43,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::get('/seguimiento', [\App\Http\Controllers\Seguimiento\SeguimientoController::class, 'index']);
     Route::get('/seguimiento/{id}', [\App\Http\Controllers\Seguimiento\SeguimientoController::class, 'show']);
     Route::get('/seguimiento/entidades_registradas/{entidad}', [\App\Http\Controllers\Seguimiento\EntidadRegistradaController::class, 'getEntidad']);
+    Route::get('/seguimiento/entidades_registradas/{entidad}/historial', [\App\Http\Controllers\Seguimiento\EntidadRegistradaController::class, 'historial']);
     Route::post('/seguimiento/respuestas', [\App\Http\Controllers\Seguimiento\RespuestaController::class, 'store']);
     
     //visualizar archivos adjuntos

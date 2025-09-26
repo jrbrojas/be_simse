@@ -26,22 +26,15 @@ class EntidadRegistradaController extends Controller
 
         return response()->json([
             "id" => $e->id,
-            "entidad" => $e->entidad->nombre ?? null,
-            "categoria" => $e->categoria->nombre ?? null,
-            "departamento" => $e->departamento->nombre ?? null,
-            "provincia" => $e->provincia->nombre ?? null,
-            "distrito" => $e->distrito->distrito ?? null,
+            "entidad_id" => $e->entidad_id,
+            "entidad" => $e->entidad,
+            "categoria" => $e->categoria,
+            "departamento" => $e->departamento,
+            "provincia" => $e->provincia,
+            "distrito" => $e->distrito,
             "ubigeo" => $e->ubigeo,
             "anio" => $e->anio,
             "respuestas" => $e->respuestas,
-            /*
-            "instrumento" => $e->instrumento,
-            "aprobado" => $e->aprobado,
-            "file" => $e->file ? [
-                "path" => $e->file->path,
-                "url" => asset("storage/" . $e->file->path),
-            ] : null,
-            */
             "created_at" => $e->created_at->format('Y-m-d H:i:s'),
         ]);
     }
@@ -50,13 +43,12 @@ class EntidadRegistradaController extends Controller
     {
         return EntidadRegistrada::query()
             ->where('entidad_id', $entidad->entidad_id)
+            ->orderBy('id', 'desc')
             ->get()
             ->map(function (EntidadRegistrada $e) {
                 return [
                     "id" => $e->id,
                     "anio" => $e->anio,
-                    "instrumento" => $e->instrumento,
-                    "aprobado" => $e->aprobado,
                     "fecha_registrada" => $e->created_at->format('Y-m-d'),
                 ];
             });
