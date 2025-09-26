@@ -19,6 +19,7 @@ class EntidadRegistradaController extends Controller
                 'provincia',
                 'distrito',
                 'file',
+                'respuestas.files',
             ])
             ->where('id', $entidad)
             ->firstOrFail();
@@ -29,15 +30,18 @@ class EntidadRegistradaController extends Controller
             "categoria" => $e->categoria->nombre ?? null,
             "departamento" => $e->departamento->nombre ?? null,
             "provincia" => $e->provincia->nombre ?? null,
-            "distrito" => $e->distrito->nombre ?? null,
+            "distrito" => $e->distrito->distrito ?? null,
             "ubigeo" => $e->ubigeo,
             "anio" => $e->anio,
+            "respuestas" => $e->respuestas,
+            /*
             "instrumento" => $e->instrumento,
             "aprobado" => $e->aprobado,
             "file" => $e->file ? [
                 "path" => $e->file->path,
                 "url" => asset("storage/" . $e->file->path),
             ] : null,
+            */
             "created_at" => $e->created_at->format('Y-m-d H:i:s'),
         ]);
     }

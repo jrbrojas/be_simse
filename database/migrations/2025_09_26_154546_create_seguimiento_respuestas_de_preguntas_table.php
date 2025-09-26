@@ -21,7 +21,6 @@ return new class extends Migration
             // Información de la respuesta
             $table->string('instrumento');                  // nombre del instrumento GRD
             $table->enum('respuesta', ['si', 'no'])->default('no'); // respuesta binaria
-            $table->boolean('aprobado')->default(false);     // si el instrumento fue aprobado
             $table->text('observacion')->nullable();         // detalle opcional de la respuesta
 
             $table->timestamps();

@@ -14,6 +14,7 @@ return new class extends Migration
             // Relación polimórfica (puede usarse en respuestas u otros)
             $table->morphs('fileable'); // genera fileable_id y fileable_type
 
+            $table->boolean('aprobado')->default(false);     // si el instrumento fue aprobado
             $table->string('name');
             $table->string('path');
             $table->string('disk')->default('local');
