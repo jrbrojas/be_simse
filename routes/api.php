@@ -44,6 +44,9 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::get('/seguimiento/{id}', [\App\Http\Controllers\Seguimiento\SeguimientoController::class, 'show']);
     Route::get('/seguimiento/entidades_registradas/{entidad}', [\App\Http\Controllers\Seguimiento\EntidadRegistradaController::class, 'getEntidad']);
     Route::post('/seguimiento/respuestas', [\App\Http\Controllers\Seguimiento\RespuestaController::class, 'store']);
+    
+    //visualizar archivos adjuntos
+    Route::get('/files/{type}/{id}', [\App\Http\Controllers\FileController::class, 'show']);
 
     //Route::resource('/monitoreo/respuestas', \App\Http\Controllers\Monitoreo\RespuestaController::class)->except('create', 'edit');
     //Route::resource('/seguimiento/respuestas', \App\Http\Controllers\Seguimiento\RespuestaController::class)->except('create', 'edit');

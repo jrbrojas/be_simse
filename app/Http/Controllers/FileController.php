@@ -3,13 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\File;
-use Illuminate\Http\Request;
+use App\Models\Seguimiento\SeguimientoFile;
 use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
-    public function show(File $file)
+    public function show($type, $id)
     {
+        if ($type === 'monitoreo') {
+            $file = File::findOrFail($id);
+        } elseif ($type === 'seguimiento') {
+            $file = SeguimientoFile::findOrFail($id);
+        } else {
+            abort(404, "Tipo de archivo no válido");
+        }
+
         return Storage::disk($file->disk)->response($file->path);
     }
 }
+
