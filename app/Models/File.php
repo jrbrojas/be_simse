@@ -16,6 +16,7 @@ class File extends Model
         'mime_type',
         'extra',
     ];
+    protected $appends = ['url'];
 
     public function fileable()
     {

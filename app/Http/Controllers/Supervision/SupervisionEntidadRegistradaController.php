@@ -31,6 +31,7 @@ class SupervisionEntidadRegistradaController extends Controller
             "distrito"     => $e->distrito,
             "ubigeo"       => $e->ubigeo,
             "anio"         => $e->anio,
+            "promedio_final"     => $e->promedio_final,
             "secciones"    => $e->secciones->map(function ($sec) {
                 return [
                     "id"       => $sec->id,
@@ -51,7 +52,7 @@ class SupervisionEntidadRegistradaController extends Controller
                                     "aprobado"    => $f->aprobado,
                                     "mime_type"   => $f->mime_type,
                                     "size"        => $f->size,
-                                    "url"         => asset('storage/'.$f->path),
+                                    "url"         => $f->url,
                                 ];
                             }),
                         ];

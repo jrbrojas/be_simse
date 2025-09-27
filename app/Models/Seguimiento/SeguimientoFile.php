@@ -20,6 +20,13 @@ class SeguimientoFile extends Model
         'extra',
     ];
 
+    protected $appends = ['url'];
+
+    public function getUrlAttribute(): string
+    {
+        return route('anyfiles.show', ["type" => "seguimiento", "id" => $this->id]);
+    }
+
     public function fileable(): MorphTo
     {
         return $this->morphTo();

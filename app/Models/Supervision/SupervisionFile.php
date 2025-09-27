@@ -18,6 +18,13 @@ class SupervisionFile extends Model
         'porcentaje',
     ];
 
+    protected $appends = ['url'];
+
+    public function getUrlAttribute(): string
+    {
+        return route('anyfiles.show', ["type" => "supervision", "id" => $this->id]);
+    }
+
     public function fileable()
     {
         return $this->morphTo();
