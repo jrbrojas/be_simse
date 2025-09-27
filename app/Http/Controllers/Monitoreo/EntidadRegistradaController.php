@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Monitoreo;
 use App\Http\Controllers\Controller;
 use App\Models\Monitoreo\EntidadRegistrada;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 
 class EntidadRegistradaController extends Controller
@@ -18,9 +19,14 @@ class EntidadRegistradaController extends Controller
                 'departamento',
                 'provincia',
                 'distrito',
+                'file',
             ])
             ->where('id', $entidad)
             ->firstOrFail();
+        $e->file_url = "";
+        if ($e->file) {
+            $e->file_url = url('/files/' . $e->file->id);
+        }
         return $e;
     }
 
