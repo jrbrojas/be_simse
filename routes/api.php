@@ -46,6 +46,15 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::get('/seguimiento/entidades_registradas/{entidad}/historial', [\App\Http\Controllers\Seguimiento\EntidadRegistradaController::class, 'historial']);
     Route::post('/seguimiento/respuestas', [\App\Http\Controllers\Seguimiento\RespuestaController::class, 'store']);
     
+    // supervision
+    Route::get('/supervision', [\App\Http\Controllers\Supervision\SupervisionController::class, 'index']);
+    Route::get('/supervision/{id}', [\App\Http\Controllers\Supervision\SupervisionController::class, 'show']);
+    Route::get('/supervision/entidades_registradas/{entidad}', [\App\Http\Controllers\Supervision\SupervisionEntidadRegistradaController::class, 'getEntidad']);
+    Route::get('/supervision/entidades_registradas/{entidad}/historial', [\App\Http\Controllers\Supervision\SupervisionEntidadRegistradaController::class, 'historial']);
+    Route::post('/supervision/items', [\App\Http\Controllers\Supervision\SupervisionItemController::class, 'store']);
+
+
+
     //visualizar archivos adjuntos
     Route::get('/files/{type}/{id}', [\App\Http\Controllers\FileController::class, 'show']);
 
