@@ -45,19 +45,16 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::get('/seguimiento/entidades_registradas/{entidad}', [\App\Http\Controllers\Seguimiento\EntidadRegistradaController::class, 'getEntidad']);
     Route::get('/seguimiento/entidades_registradas/{entidad}/historial', [\App\Http\Controllers\Seguimiento\EntidadRegistradaController::class, 'historial']);
     Route::post('/seguimiento/respuestas', [\App\Http\Controllers\Seguimiento\RespuestaController::class, 'store']);
-    
+
     // supervision
     Route::get('/supervision', [\App\Http\Controllers\Supervision\SupervisionController::class, 'index']); // opcional si quieres listar todo
     Route::get('/supervision/{id}', [\App\Http\Controllers\Supervision\SupervisionController::class, 'show']);
-    Route::post('/supervision', [\App\Http\Controllers\Supervision\SupervisionController::class, 'store']);
+    Route::post('/supervision/respuestas', [\App\Http\Controllers\Supervision\SupervisionController::class, 'store']);
     Route::get('/supervision/entidades_registradas/{entidad}', [\App\Http\Controllers\Supervision\SupervisionEntidadRegistradaController::class, 'getEntidad']);
     Route::get('/supervision/entidades_registradas/{entidad}/historial', [\App\Http\Controllers\Supervision\SupervisionEntidadRegistradaController::class, 'historial']);
 
     //visualizar archivos adjuntos
     Route::get('/files/{type}/{id}', [\App\Http\Controllers\FileController::class, 'show']);
 
-    //Route::resource('/monitoreo/respuestas', \App\Http\Controllers\Monitoreo\RespuestaController::class)->except('create', 'edit');
-    //Route::resource('/seguimiento/respuestas', \App\Http\Controllers\Seguimiento\RespuestaController::class)->except('create', 'edit');
-    //Route::resource('/supervision/respuestas', \App\Http\Controllers\Supervision\RespuestaController::class)->except('create', 'edit');
-    //Route::get('/evaluacion/resumen', [\App\Http\Controllers\Evaluacion\ResumenController::class, 'resumen'])->name('evaluacion.resumen');
+    Route::get('/evaluacion/resumen/{entidad}', [\App\Http\Controllers\Evaluacion\ResumenController::class, 'resumen'])->name('evaluacion.resumen');
 });

@@ -21,7 +21,8 @@ return new class extends Migration
             $table->string('mime_type')->nullable();
 
             $table->string('descripcion')->nullable();
-            $table->enum('aprobado', ['si', 'no'])->default('no');
+            $table->string('porcentaje')->default('0');
+            $table->string('promedio')->default('0');
 
             $table->timestamps();
         });

@@ -7,9 +7,31 @@ use App\Models\Supervision\SupervisionEntidadRegistrada;
 use App\Models\Supervision\SupervisionSeccion;
 use App\Models\Supervision\SupervisionItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SupervisionController extends Controller
 {
+    public function index()
+    {
+        // Obtenemos el último registro por entidad_id
+        $ids = SupervisionEntidadRegistrada::query()
+            ->select(DB::raw('MAX(id) as max_id'))
+            ->groupBy('entidad_id')
+            ->pluck('max_id')
+            ->toArray();
+
+        // Devolvemos las entidades con sus relaciones
+        return SupervisionEntidadRegistrada::with([
+            'entidad',
+            'categoria',
+            'departamento',
+            'provincia',
+            'distrito',
+        ])
+        ->whereIn('id', $ids)
+        ->get();
+    }
+
     public function store(Request $request)
     {
         // 1) Cabecera
@@ -27,7 +49,8 @@ class SupervisionController extends Controller
         $cantidadSecciones      = 0;
 
         // 2) Secciones + items + archivos
-        $secciones = $request->input('secciones', []);
+        $all = $request->all();
+        $secciones = $all['secciones'] ?? [];
 
         foreach ($secciones as $secData) {
             // Guardar la sección (promedio inicial = 0, se recalcula después)
@@ -42,8 +65,8 @@ class SupervisionController extends Controller
             if ($seccion->respuesta === 'no') {
                 continue;
             }
-            
-            $items = $secData['items'] ?? [];
+
+            $items = $secData['item'] ?? [];
             $sumaPorcentajes = 0;
             $cantidadItems   = 0;
 
@@ -52,28 +75,25 @@ class SupervisionController extends Controller
                     'supervision_seccion_id' => $seccion->id,
                     'nombre'      => $itemData['nombre'] ?? 'Sin nombre',
                     'porcentaje'  => $itemData['porcentaje'] ?? 0,
-                    //'respuesta'   => $itemData['respuesta'] ?? 'no',
-                    //'observacion' => $itemData['observacion'] ?? null,
                 ]);
-        
+
                 $sumaPorcentajes += (int) ($itemData['porcentaje'] ?? 0);
                 $cantidadItems++;
-        
-                if (!empty($itemData['files'])) {
-                    foreach ($itemData['files'] as $bundle) {
-                        if (!isset($bundle['file'])) continue;
-        
-                        $uploaded = $bundle['file'];
+
+                if (!empty($itemData['file'])) {
+                    $files = [$itemData['file']];
+                    foreach ($files as $uploaded) {
                         $path     = $uploaded->store('supervision/files');
-        
+
                         $item->files()->create([
                             'name'        => $uploaded->getClientOriginalName(),
                             'path'        => $path,
                             'disk'        => 'local',
                             'size'        => $uploaded->getSize(),
                             'mime_type'   => $uploaded->getClientMimeType(),
-                            'descripcion' => $bundle['descripcion'] ?? null,
-                            'aprobado'    => ($bundle['aprobado'] ?? 'no') === 'si' ? 'si' : 'no',
+                            'descripcion' => $itemData['descripcion'] ?? null,
+                            'porcentaje'    => ($itemData['porcentaje'] ?? 'no') === 'si' ? 'si' : 'no',
+                            'promedio' => $itemData['promedio'] ?? 0,
                         ]);
                     }
                 }

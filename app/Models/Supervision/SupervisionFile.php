@@ -15,7 +15,7 @@ class SupervisionFile extends Model
         'size',
         'mime_type',
         'descripcion',
-        'aprobado',
+        'porcentaje',
     ];
 
     public function fileable()
