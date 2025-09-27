@@ -24,6 +24,10 @@ class MonitoreoController extends Controller
             'departamento',
             'provincia',
             'distrito'
-        ])->whereIn('id', $ids)->get();
+        ])
+            ->when(request()->get("categoria"), function ($query, $categoria) {
+                $query->where('categoria_responsable_id', $categoria);
+            })
+            ->whereIn('id', $ids)->get();
     }
 }
