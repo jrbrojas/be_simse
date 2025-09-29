@@ -1,4 +1,28 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - laravel
+
+  web:
+    image: nginx:alpine
+    container_name: laravel_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - laravel
   postgres:
     image: postgres
     restart: always
@@ -8,6 +32,8 @@ services:
       POSTGRES_DB: bd_simse
     ports:
       - "5432:5432"
-    volumes:
-      - ./storage/postgres/data:/var/lib/postgresql/data
-
+    networks:
+      - laravel
+networks:
+  laravel:
+    driver: bridge
