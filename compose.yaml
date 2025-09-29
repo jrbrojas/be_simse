@@ -1,11 +1,13 @@
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+  postgres:
+    image: postgres
     restart: always
     environment:
-      ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "this@1234#passw0rd"
+      POSTGRES_USER: usuariosimse
+      POSTGRES_PASSWORD: th1s@p4ssw0rd
+      POSTGRES_DB: bd_simse
     ports:
-      - "1436:1433"
+      - "5432:5432"
     volumes:
-      - ./storage/sqlserver/data:/var/opt/mssql
+      - ./storage/postgres/data:/var/lib/postgresql/data
+
