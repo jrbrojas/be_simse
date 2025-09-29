@@ -122,7 +122,7 @@
                 <tr>
                     <td>{{ $resp->codigo ?? '-' }}</td>
                     <td>{{ $resp->pregunta ?? '-' }}</td>
-                    <td>{{ $resp->respuesta ?? '-' }}</td>
+                    <td>{{ strtoupper($resp->respuesta ?? '-') }}</td>
                     <td>{{ strtoupper($resp->evidencia) ?? '-' }}</td>
                     <td>
                         @if($resp->files && $resp->files->count())
