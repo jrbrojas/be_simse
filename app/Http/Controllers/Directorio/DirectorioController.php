@@ -7,6 +7,8 @@ use App\Http\Controllers\Traits\DataUbicacion;
 use App\Models\Directorio\EntidadRegistrada;
 use App\Models\Directorio\Responsable;
 use App\Models\Entidad;
+use App\Models\Prov;
+use App\Models\Ubigeo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +18,13 @@ class DirectorioController extends Controller
 
     public function getEntidad(int $entidad)
     {
-        $e = EntidadRegistrada::query()->with(['entidad', 'categoria'])->where('entidad_id', $entidad)->firstOrFail();
+        $e = EntidadRegistrada::query()
+            ->with([
+                'entidad.distrito',
+                'entidad.provincia',
+                'entidad.departamento',
+                'categoria',
+            ])->where('entidad_id', $entidad)->firstOrFail();
         return $e;
     }
 

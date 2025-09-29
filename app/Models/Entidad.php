@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Directorio\CategoriaResponsable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Entidad extends Model
 {
@@ -53,6 +54,29 @@ class Entidad extends Model
     public function distrito()
     {
         return $this->belongsTo(Ubigeo::class, 'ubigeo', 'ubigeo');
+    }
+
+    /**
+     * @return HasOneThrough<Prov>
+     */
+    public function provincia()
+    {
+        return $this->hasOneThrough(
+            Prov::class,   // modelo final
+            Ubigeo::class,    // modelo intermedio
+            'ubigeo',           // FK en distritos que coincide con entidades.ubigeo
+            'idprov',           // FK en provincias que coincide con distritos.idprov
+            'ubigeo',           // clave local en entidades
+            'idprov'            // clave local en distritos
+        );
+    }
+
+    /**
+     * @return BelongsTo<Depa>
+     */
+    public function departamento()
+    {
+        return $this->belongsTo(Depa::class, "departamento_id", "iddpto");
     }
 
     /**

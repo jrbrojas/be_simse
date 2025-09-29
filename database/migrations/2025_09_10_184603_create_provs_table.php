@@ -12,9 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('provincias', function (Blueprint $table) {
-            $table->id();
-
-            $table->string('idprov');
+            $table->string('idprov')->unique();
             $table->string('nomdpto');
             $table->string('nombre');
 
@@ -27,6 +25,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('provincias', function (Blueprint $table) {
+            $table->dropUnique('idprov');
+        });
         Schema::dropIfExists('provincias');
     }
 };

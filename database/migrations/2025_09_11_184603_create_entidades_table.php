@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('entidades', function (Blueprint $table) {
             $table->id();
 
-            $table->string('ubigeo');
             $table->string('nombre');
             $table->string('ruc')->nullable();
             $table->string('sigla')->nullable();
@@ -24,6 +23,15 @@ return new class extends Migration
             $table->string('web')->nullable();
             $table->unsignedBigInteger('categoria_id');
             $table->foreign('categoria_id')->references('id')->on('categorias_responsables');
+
+            $table->string('ubigeo');
+            //$table->foreign('ubigeo')->references('ubigeo')->on('distritos');
+
+            $table->string('provincia_id');
+            //$table->foreign('provincia_id')->references('idprov')->on('provincias');
+
+            $table->string('departamento_id');
+            //$table->foreign('departamento_id')->references('iddpto')->on('departamentos');
 
             $table->timestamps();
         });
@@ -35,7 +43,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('responsables', function (Blueprint $table) {
-            $table->dropForeign(['categoria_id']);
+            $table->dropForeign(['categoria_id']);//, 'departamento_id', 'provincia_id', 'ubigeo']);
         });
         Schema::dropIfExists('entidades');
     }

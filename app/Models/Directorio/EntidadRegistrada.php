@@ -2,7 +2,10 @@
 
 namespace App\Models\Directorio;
 
+use App\Models\Depa;
 use App\Models\Entidad;
+use App\Models\Prov;
+use App\Models\Ubigeo;
 use Illuminate\Database\Eloquent\Model;
 
 class EntidadRegistrada extends Model

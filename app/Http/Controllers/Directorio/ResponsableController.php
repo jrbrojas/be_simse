@@ -42,6 +42,11 @@ class ResponsableController extends Controller
             ->when($request->get('id_entidad'), function ($query, $id) {
                 $query->where('id_entidad', $id);
             })
+            ->with([
+                'distrito',
+                'provincia',
+                'departamento',
+            ])
             ->leftJoin('roles_responsables', 'responsables.id_rol', '=', 'roles_responsables.id')
             ->leftJoin('cargos_responsables', 'responsables.id_cargo', '=', 'cargos_responsables.id')
             ->orderBy('responsables.fecha_fin', 'DESC')
