@@ -34,6 +34,10 @@ services:
       - "5432:5432"
     networks:
       - laravel
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 networks:
   laravel:
     driver: bridge
+volumes:
+  pgdata:
