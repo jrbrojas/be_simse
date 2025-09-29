@@ -16,11 +16,11 @@ class DatabaseSeeder extends Seeder
             DepasImportSeeder::class,
             ProvsImportSeeder::class,
             UbigeoImportSeeder::class,
+            CategoriasResponsablesSeeder::class,
             EntidadesImportSeeder::class,
             RolesSeeder::class,
             UserSeeder::class,
             CargosResponsablesSeeder::class,
-            CategoriasResponsablesSeeder::class,
             RolesResponsablesSeeder::class,
         ]);
     }

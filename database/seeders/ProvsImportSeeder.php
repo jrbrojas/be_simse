@@ -14,6 +14,6 @@ class ProvsImportSeeder extends Seeder
     public function run(): void
     {
         $import = new ProvsImport();
-        Excel::import($import, './database/seeders/Csv/provs.csv');
+        Excel::import($import, './database/seeders/Csv/provincias.csv');
     }
 }

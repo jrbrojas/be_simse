@@ -43,7 +43,7 @@ class DirectorioController extends Controller
                 'responsables.*',
                 'ubigeo.ubigeo',
                 'entidades.nombre as nombre_entidad',
-                'depas.nombre as departamento',
+                'departamentos.nombre as departamento',
                 'provs.nombre as provincia',
                 'ubigeo.distrito as distrito',
                 'categorias_responsables.nombre as categoria',

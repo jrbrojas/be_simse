@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Directorio\CategoriaResponsable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Entidad extends Model
 {
@@ -45,8 +47,19 @@ class Entidad extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Ubigeo>
+     */
     public function distrito()
     {
         return $this->belongsTo(Ubigeo::class, 'ubigeo', 'ubigeo');
+    }
+
+    /**
+     * @return BelongsTo<CategoriaResponsable>
+     */
+    public function categoria()
+    {
+        return $this->belongsTo(CategoriaResponsable::class, 'categoria_id', 'id');
     }
 }

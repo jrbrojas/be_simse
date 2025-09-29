@@ -14,6 +14,6 @@ class DepasImportSeeder extends Seeder
     public function run(): void
     {
         $import = new DepasImport();
-        Excel::import($import, './database/seeders/Csv/depas.csv');
+        Excel::import($import, './database/seeders/Csv/departamentos.csv');
     }
 }

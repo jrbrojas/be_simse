@@ -14,6 +14,6 @@ class UbigeoImportSeeder extends Seeder
     public function run(): void
     {
         $import = new UbigeosImport();
-        Excel::import($import, './database/seeders/Csv/ubigeo.csv');
+        Excel::import($import, './database/seeders/Csv/distritos.csv');
     }
 }

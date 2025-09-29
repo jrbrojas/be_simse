@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ubigeo', function (Blueprint $table) {
+        Schema::create('distritos', function (Blueprint $table) {
             $table->id();
 
             $table->string('ubigeo');
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ubigeo');
+        Schema::dropIfExists('distritos');
     }
 };

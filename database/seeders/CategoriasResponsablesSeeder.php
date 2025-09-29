@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Directorio\CategoriaResponsable;
+use Database\Seeders\Csv\CategoriaResponsableImport;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CategoriasResponsablesSeeder extends Seeder
 {
@@ -15,18 +17,7 @@ class CategoriasResponsablesSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = [
-            ['nombre' => 'Entidades del Poder Legislativo'],
-            ['nombre' => 'Ministerios'],
-            ['nombre' => 'Gobiernos Regionales'],
-            ['nombre' => 'Gobiernos Provinciales'],
-            ['nombre' => 'Gobiernos Distritales'],
-            ['nombre' => 'Universidades Públicas'],
-            ['nombre' => 'Universidades Privadas'],
-            ['nombre' => 'Escuelas Superiores de las FFA'],
-            ['nombre' => 'Otras entidades'],
-        ];
-
-        CategoriaResponsable::query()->insert($data);
+        $import = new CategoriaResponsableImport();
+        Excel::import($import, './database/seeders/Csv/cntbc_tiporganismo.csv');
     }
 }
