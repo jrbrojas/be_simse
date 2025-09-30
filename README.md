@@ -4,6 +4,9 @@ compose, para ello ir al apartado "Forma de iniciar el proyecto con Docker"
 si desea usar la linea de comandos de php puede ver el apartado "Forma de iniciar
 el proyecto con php"
 
+```bash
+$ rm storage/app/private/* -Rf
+```
 
 ## Forma de iniciar el proyecto con Docker
 
@@ -38,6 +41,12 @@ DB_PASSWORD=th1s@p4ssw0rd
 $ docker compose exec php artisan migrate:fresh --seed
 ```
 
+### 4. Generar key de aplicacion
+
+```bash
+$ php artisan key:generate
+```
+
 ## Forma de iniciar el proyecto con php
 
 ### 1. Instalar dependencias
@@ -62,7 +71,13 @@ DB_PASSWORD=th1s@p4ssw0rd
 $ php artisan migrate:fresh --seed
 ```
 
-### 3. Correr Servidor
+### 3. Generar key de aplicacion
+
+```bash
+$ php artisan key:generate
+```
+
+### 4. Correr Servidor
 
 ```bash
 $ php artisan serve
