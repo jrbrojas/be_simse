@@ -35,7 +35,7 @@
         <td style="width:25%; text-align:left; vertical-align:top;">
             @php $logoPath = public_path('img/logo.png'); @endphp
             @if(file_exists($logoPath))
-                <img src="{{ $logoPath }}" alt="Logo" style="width:100px;">
+                <img src="{{ $logoPath }}" alt="Logo" style="height: 48px;">
             @else
                 <div style="color:#999;">[LOGO]</div>
             @endif
@@ -46,7 +46,7 @@
     <tr>
         <td colspan="2" style="text-align:center; padding-top:8px;">
             <div style="font-weight:bold; font-size:14px;">
-                REGISTRO DE INDICADORES DEL PLANAGERD
+                REGISTRO DE INDICADORES DE MONITOREO
             </div>
         </td>
     </tr>
@@ -100,7 +100,7 @@
 </div>
 
 {{-- Indicadores agrupados --}}
-<h4 style="margin-top:20px;">INDICADOR DEL PLANAGERD</h4>
+<h4 style="margin-top:20px;">INDICADORES</h4>
 
 @foreach($respuestasAgrupadas as $op => $grupo)
     <div class="op-header">
