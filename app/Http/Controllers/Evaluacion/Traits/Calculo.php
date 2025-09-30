@@ -28,7 +28,7 @@ trait Calculo
 
     protected function calculoSeguimiento(
         ?SEntidadRegistrada $seguimiento = null
-    ): int {
+    ): float {
         if (!$seguimiento) {
             return 0;
         }
@@ -47,7 +47,7 @@ trait Calculo
      */
     protected function calculoSupervision(
         ?SupervisionEntidadRegistrada $supervision = null
-    ): int {
+    ): float {
         if (!$supervision) {
             return 0;
         }
