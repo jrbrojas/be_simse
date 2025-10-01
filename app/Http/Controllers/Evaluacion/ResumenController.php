@@ -15,28 +15,49 @@ class ResumenController extends Controller
 
     public function getMonitoreo(?int $categoria, ?int $entidad_id): MEntidadRegistrada | null
     {
+
+        if ($categoria) {
+            return MEntidadRegistrada::query()
+                ->with([
+                    'entidad',
+                    'distrito',
+                    'provincia',
+                    'departamento',
+                    'categoria',
+                    'respuestas.files'
+                ])
+                ->where('categoria_responsable_id', $categoria)
+                ->orderBy('id', 'desc')
+                ->first();
+        }
+
         return MEntidadRegistrada::query()
             ->with(['respuestas.files',])
-            ->when($categoria, function ($query) use ($categoria) {
-                $query->where('categoria_responsable_id', $categoria);
-            })
-            ->when($entidad_id, function ($query) use ($entidad_id) {
-                $query->where('entidad_id', $entidad_id);
-            })
+            ->where('entidad_id', $entidad_id)
             ->orderBy('id', 'desc')
             ->first();
     }
 
     public function getSeguimiento(?int $categoria, ?int $entidad_id): SEntidadRegistrada | null
     {
+        if ($categoria) {
+            return SEntidadRegistrada::query()
+                ->with([
+                    'entidad',
+                    'distrito',
+                    'provincia',
+                    'departamento',
+                    'respuestas.files',
+                    'categoria',
+                ])
+                ->where('categoria_responsable_id', $categoria)
+                ->orderBy('id', 'desc')
+                ->first();
+        }
+
         return SEntidadRegistrada::query()
             ->with(['respuestas.files',])
-            ->when($categoria, function ($query) use ($categoria) {
-                $query->where('categoria_responsable_id', $categoria);
-            })
-            ->when($entidad_id, function ($query) use ($entidad_id) {
-                $query->where('entidad_id', $entidad_id);
-            })
+            ->where('entidad_id', $entidad_id)
             ->orderBy('id', 'desc')
             ->first();
     }
@@ -46,19 +67,30 @@ class ResumenController extends Controller
      */
     public function getSupervision(?int $categoria, ?int $entidad_id): ?SupervisionEntidadRegistrada
     {
+
+        if($categoria){
+            return SupervisionEntidadRegistrada::query()
+                ->with([
+                    'entidad',
+                    'distrito',
+                    'provincia',
+                    'departamento',
+                    'secciones',
+                    'categoria',
+                ])
+                ->where('categoria_responsable_id', $categoria)
+                ->orderBy('id', 'desc')
+                ->first();
+        }
+
         return SupervisionEntidadRegistrada::query()
             ->with('secciones')
-            ->when($categoria, function ($query) use ($categoria) {
-                $query->where('categoria_responsable_id', $categoria);
-            })
-            ->when($entidad_id, function ($query) use ($entidad_id) {
-                $query->where('entidad_id', $entidad_id);
-            })
+            ->where('entidad_id', $entidad_id)
             ->orderBy('id', 'desc')
             ->first();
     }
 
-    public function resumen(Request $request, int $entidad)
+    public function resumen(int $entidad)
     {
         // Traemos la entidad registrada con todas sus relaciones
         $monitoreo = $this->getMonitoreo(null, $entidad);
