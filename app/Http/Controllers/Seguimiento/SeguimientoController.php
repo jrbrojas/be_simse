@@ -27,6 +27,9 @@ class SeguimientoController extends Controller
             'distrito',
             'file'
         ])
+        ->when(request()->get('categoria'), function ($query, $categoria) {
+            $query->where('categoria_responsable_id', $categoria);
+        })
         ->whereIn('id', $ids)
         ->get();
     }

@@ -29,6 +29,9 @@ class SupervisionController extends Controller
             'provincia',
             'distrito',
         ])
+        ->when(request()->get('categoria'), function ($query, $categoria) {
+            $query->where('categoria_responsable_id', $categoria);
+        })
         ->whereIn('id', $ids)
         ->get();
     }
