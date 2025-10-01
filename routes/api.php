@@ -56,5 +56,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::get('/supervision/entidades_registradas/{entidad}/historial', [\App\Http\Controllers\Supervision\SupervisionEntidadRegistradaController::class, 'historial']);
     Route::get('/supervision/entidades_registradas/{entidad}/pdf', [\App\Http\Controllers\Supervision\SupervisionEntidadRegistradaController::class, 'exportPdf'])->name('monitoreo.entidad.pdf');
 
+    // Evaluacion
     Route::get('/evaluacion/resumen/{entidad}', [\App\Http\Controllers\Evaluacion\ResumenController::class, 'resumen'])->name('evaluacion.resumen');
+    Route::get('/evaluacion/resumen-categoria', [\App\Http\Controllers\Evaluacion\ResumenController::class, 'resumenCategoria'])->name('evaluacion.categoria.resumen');
 });

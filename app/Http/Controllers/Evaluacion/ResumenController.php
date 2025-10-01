@@ -13,26 +13,30 @@ class ResumenController extends Controller
 {
     use Calculo;
 
-    public function getMonitoreo(?int $categoria, int $entidad_id): MEntidadRegistrada | null
+    public function getMonitoreo(?int $categoria, ?int $entidad_id): MEntidadRegistrada | null
     {
         return MEntidadRegistrada::query()
             ->with(['respuestas.files',])
             ->when($categoria, function ($query) use ($categoria) {
                 $query->where('categoria_responsable_id', $categoria);
             })
-            ->where('entidad_id', $entidad_id)
+            ->when($entidad_id, function ($query) use ($entidad_id) {
+                $query->where('entidad_id', $entidad_id);
+            })
             ->orderBy('id', 'desc')
             ->first();
     }
 
-    public function getSeguimiento(?int $categoria, int $entidad_id): SEntidadRegistrada | null
+    public function getSeguimiento(?int $categoria, ?int $entidad_id): SEntidadRegistrada | null
     {
         return SEntidadRegistrada::query()
             ->with(['respuestas.files',])
             ->when($categoria, function ($query) use ($categoria) {
                 $query->where('categoria_responsable_id', $categoria);
             })
-            ->where('entidad_id', $entidad_id)
+            ->when($entidad_id, function ($query) use ($entidad_id) {
+                $query->where('entidad_id', $entidad_id);
+            })
             ->orderBy('id', 'desc')
             ->first();
     }
@@ -40,14 +44,16 @@ class ResumenController extends Controller
     /**
      * @todo falta terminar supervision
      */
-    public function getSupervision(?int $categoria, int $entidad_id): ?SupervisionEntidadRegistrada
+    public function getSupervision(?int $categoria, ?int $entidad_id): ?SupervisionEntidadRegistrada
     {
         return SupervisionEntidadRegistrada::query()
             ->with('secciones')
             ->when($categoria, function ($query) use ($categoria) {
                 $query->where('categoria_responsable_id', $categoria);
             })
-            ->where('entidad_id', $entidad_id)
+            ->when($entidad_id, function ($query) use ($entidad_id) {
+                $query->where('entidad_id', $entidad_id);
+            })
             ->orderBy('id', 'desc')
             ->first();
     }
@@ -55,9 +61,26 @@ class ResumenController extends Controller
     public function resumen(Request $request, int $entidad)
     {
         // Traemos la entidad registrada con todas sus relaciones
-        $monitoreo = $this->getMonitoreo($request->categoria, $entidad);
-        $seguimiento = $this->getSeguimiento($request->categoria, $entidad);
-        $supervision = $this->getSupervision($request->categoria, $entidad);
+        $monitoreo = $this->getMonitoreo(null, $entidad);
+        $seguimiento = $this->getSeguimiento(null, $entidad);
+        $supervision = $this->getSupervision(null, $entidad);
+
+        return response()->json([
+            "respuestas" => compact(
+                'monitoreo',
+                'seguimiento',
+                'supervision',
+            ),
+            "calculo" => $this->calculo($monitoreo, $seguimiento, $supervision),
+        ]);
+    }
+
+    public function resumenCategoria(Request $request)
+    {
+        // Traemos la entidad registrada con todas sus relaciones filtrados por cateogria
+        $monitoreo = $this->getMonitoreo($request->categoria, null);
+        $seguimiento = $this->getSeguimiento($request->categoria, null);
+        $supervision = $this->getSupervision($request->categoria, null);
 
         return response()->json([
             "respuestas" => compact(
