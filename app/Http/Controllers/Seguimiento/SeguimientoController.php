@@ -22,6 +22,7 @@ class SeguimientoController extends Controller
             'entidad',
             'categoria',
             'departamento',
+            'respuestas',
             'provincia',
             'distrito',
             'file'
@@ -37,6 +38,7 @@ class SeguimientoController extends Controller
             'categoria',
             'departamento',
             'provincia',
+            'respuestas',
             'distrito',
             'file'
         ])->findOrFail($id);

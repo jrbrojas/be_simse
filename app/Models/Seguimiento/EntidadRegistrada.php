@@ -48,7 +48,7 @@ class EntidadRegistrada extends Model
     {
         return $this->hasMany(RespuestasPreguntas::class, 'seguimiento_entidad_registrada_id');
     }
-    
+
     /**
      * @return BelongsTo<CategoriaResponsable>
      */

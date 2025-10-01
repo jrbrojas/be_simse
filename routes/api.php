@@ -14,6 +14,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
         Route::resource('/usuarios', \App\Http\Controllers\UserController::class)->except('create', 'edit');
         Route::get('/ubigeo', [\App\Http\Controllers\UbigeoController::class, 'ubigeo']);
     });
+
     // recurso comunes
     Route::resource('/entidad', \App\Http\Controllers\EntidadController::class)->only('index');
     Route::resource('/departamentos', \App\Http\Controllers\DepartmentController::class)->only('index');

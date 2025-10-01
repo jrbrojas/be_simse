@@ -19,7 +19,9 @@ class MonitoreoController extends Controller
             ->select(DB::raw('MAX(id) as max_id'))
             ->groupBy('entidad_id')
             ->get();
+
         $ids = $ids->pluck('max_id')->toArray();
+
         return EntidadRegistrada::with(['entidad', 'respuestas',
             'departamento',
             'provincia',

@@ -57,6 +57,6 @@ class SupervisionEntidadRegistrada extends Model
      */
     public function secciones()
     {
-        return $this->hasMany(SupervisionSeccion::class);
+        return $this->hasMany(SupervisionSeccion::class, 'supervision_entidad_registrada_id');
     }
 }

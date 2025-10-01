@@ -25,6 +25,7 @@ class SupervisionController extends Controller
             'entidad',
             'categoria',
             'departamento',
+            'secciones',
             'provincia',
             'distrito',
         ])
@@ -126,7 +127,7 @@ class SupervisionController extends Controller
 
     public function show(int $id)
     {
-        return SupervisionEntidadRegistrada::with('secciones.items.files')->findOrFail($id);
+        return SupervisionEntidadRegistrada::with(['secciones', 'items', 'files'])->findOrFail($id);
     }
 }
 
