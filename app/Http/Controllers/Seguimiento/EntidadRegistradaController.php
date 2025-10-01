@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Seguimiento;
 
-//use Barryvdh\DomPDF\Facade\Pdf;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
 use App\Models\Seguimiento\EntidadRegistrada;
 
@@ -37,6 +37,28 @@ class EntidadRegistradaController extends Controller
             "respuestas" => $e->respuestas,
             "created_at" => $e->created_at->format('Y-m-d H:i:s'),
         ]);
+    }
+
+    public function exportPdf(int $entidad)
+    {
+        $data = EntidadRegistrada::with([
+            'entidad',
+            'categoria',
+            'departamento',
+            'provincia',
+            'distrito',
+            'respuestas'
+        ])->findOrFail($entidad);
+
+        //$respuestasAgrupadas = $data->respuestas->groupBy('instrumento');
+
+        $pdf = Pdf::loadView('pdf.seguimiento_reporte', [
+            'data' => $data,
+            'respuestasAgrupadas' => $data
+        ])
+        ->setPaper('a4', 'portrait');
+
+        return $pdf->stream("reporte_entidad_{$entidad}.pdf");
     }
 
     public function historial(EntidadRegistrada $entidad)

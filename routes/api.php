@@ -45,6 +45,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::get('/seguimiento/entidades_registradas/{entidad}', [\App\Http\Controllers\Seguimiento\EntidadRegistradaController::class, 'getEntidad']);
     Route::get('/seguimiento/entidades_registradas/{entidad}/historial', [\App\Http\Controllers\Seguimiento\EntidadRegistradaController::class, 'historial']);
     Route::post('/seguimiento/respuestas', [\App\Http\Controllers\Seguimiento\RespuestaController::class, 'store']);
+    Route::get('/seguimiento/entidades_registradas/{entidad}/pdf', [\App\Http\Controllers\Seguimiento\EntidadRegistradaController::class, 'exportPdf'])->name('monitoreo.entidad.pdf');
 
     // supervision
     Route::get('/supervision', [\App\Http\Controllers\Supervision\SupervisionController::class, 'index']); // opcional si quieres listar todo
@@ -52,6 +53,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::post('/supervision/respuestas', [\App\Http\Controllers\Supervision\SupervisionController::class, 'store']);
     Route::get('/supervision/entidades_registradas/{entidad}', [\App\Http\Controllers\Supervision\SupervisionEntidadRegistradaController::class, 'getEntidad']);
     Route::get('/supervision/entidades_registradas/{entidad}/historial', [\App\Http\Controllers\Supervision\SupervisionEntidadRegistradaController::class, 'historial']);
+    Route::get('/supervision/entidades_registradas/{entidad}/pdf', [\App\Http\Controllers\Supervision\SupervisionEntidadRegistradaController::class, 'exportPdf'])->name('monitoreo.entidad.pdf');
 
     Route::get('/evaluacion/resumen/{entidad}', [\App\Http\Controllers\Evaluacion\ResumenController::class, 'resumen'])->name('evaluacion.resumen');
 });

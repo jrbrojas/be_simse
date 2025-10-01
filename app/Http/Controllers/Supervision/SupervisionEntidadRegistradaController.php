@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Supervision;
 
 use App\Http\Controllers\Controller;
 use App\Models\Supervision\SupervisionEntidadRegistrada;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SupervisionEntidadRegistradaController extends Controller
 {
@@ -61,6 +62,28 @@ class SupervisionEntidadRegistradaController extends Controller
             }),
             "created_at"   => $e->created_at->format('Y-m-d H:i:s'),
         ]);
+    }
+
+    public function exportPdf(int $entidad)
+    {
+        $data = SupervisionEntidadRegistrada::with([
+            'entidad',
+            'categoria',
+            'departamento',
+            'provincia',
+            'distrito',
+            'secciones.items.files',
+        ])->findOrFail($entidad);
+
+        $respuestasAgrupadas = $data->secciones->groupBy('nombre');
+
+        $pdf = Pdf::loadView('pdf.supervision_reporte', [
+            'data' => $data,
+            'respuestasAgrupadas' => $respuestasAgrupadas
+        ])
+        ->setPaper('a4', 'portrait');
+
+        return $pdf->stream("reporte_entidad_{$entidad}.pdf");
     }
 
     /**
