@@ -83,3 +83,4 @@ $ php artisan key:generate
 $ php artisan serve
 ```
 
+$ php artisan serve --host=0.0.0.0 --port=$(grep APP_PORT .env | cut -d '=' -f2)
