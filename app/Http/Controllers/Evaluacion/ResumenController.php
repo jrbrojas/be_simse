@@ -7,6 +7,7 @@ use App\Http\Controllers\Evaluacion\Traits\Calculo;
 use App\Models\Monitoreo\EntidadRegistrada as MEntidadRegistrada;
 use App\Models\Seguimiento\EntidadRegistrada as SEntidadRegistrada;
 use App\Models\Supervision\SupervisionEntidadRegistrada;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +15,7 @@ class ResumenController extends Controller
 {
     use Calculo;
 
-    public function getMonitoreo(?int $categoria, ?int $entidad_id): MEntidadRegistrada | null | array
+    public function getMonitoreo(?int $categoria, ?int $entidad_id): MEntidadRegistrada | null | array | Collection
     {
 
         if ($categoria) {
@@ -46,7 +47,7 @@ class ResumenController extends Controller
             ->first();
     }
 
-    public function getSeguimiento(?int $categoria, ?int $entidad_id): SEntidadRegistrada | null | array
+    public function getSeguimiento(?int $categoria, ?int $entidad_id): SEntidadRegistrada | null | array | Collection
     {
         if ($categoria) {
             // Obtenemos el último registro por entidad_id
@@ -83,7 +84,7 @@ class ResumenController extends Controller
     /**
      * @todo falta terminar supervision
      */
-    public function getSupervision(?int $categoria, ?int $entidad_id): SupervisionEntidadRegistrada | null | array
+    public function getSupervision(?int $categoria, ?int $entidad_id): SupervisionEntidadRegistrada | null | array | Collection
     {
 
         if ($categoria) {
