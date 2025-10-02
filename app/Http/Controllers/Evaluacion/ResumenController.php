@@ -14,7 +14,7 @@ class ResumenController extends Controller
 {
     use Calculo;
 
-    public function getMonitoreo(?int $categoria, ?int $entidad_id): MEntidadRegistrada | null
+    public function getMonitoreo(?int $categoria, ?int $entidad_id): MEntidadRegistrada | null | array
     {
 
         if ($categoria) {
@@ -46,7 +46,7 @@ class ResumenController extends Controller
             ->first();
     }
 
-    public function getSeguimiento(?int $categoria, ?int $entidad_id): SEntidadRegistrada | null
+    public function getSeguimiento(?int $categoria, ?int $entidad_id): SEntidadRegistrada | null | array
     {
         if ($categoria) {
             // Obtenemos el último registro por entidad_id
@@ -83,7 +83,7 @@ class ResumenController extends Controller
     /**
      * @todo falta terminar supervision
      */
-    public function getSupervision(?int $categoria, ?int $entidad_id): ?SupervisionEntidadRegistrada
+    public function getSupervision(?int $categoria, ?int $entidad_id): SupervisionEntidadRegistrada | null | array
     {
 
         if ($categoria) {
