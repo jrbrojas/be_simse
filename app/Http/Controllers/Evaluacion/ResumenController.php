@@ -125,13 +125,19 @@ class ResumenController extends Controller
         $seguimiento = $this->getSeguimiento(null, $entidad);
         $supervision = $this->getSupervision(null, $entidad);
 
+        $calculo = $this->calculo($monitoreo, $seguimiento, $supervision);
+        $data = [];
+        foreach ($calculo as $key => $value) {
+            $data[$key] = count($value) ? $value[0]["total"] : 0;
+        }
+
         return response()->json([
             "respuestas" => compact(
                 'monitoreo',
                 'seguimiento',
                 'supervision',
             ),
-            "calculo" => $this->calculo($monitoreo, $seguimiento, $supervision),
+            "calculo" => $data,
         ]);
     }
 
@@ -139,8 +145,72 @@ class ResumenController extends Controller
     {
         // Traemos la entidad registrada con todas sus relaciones filtrados por cateogria
         $monitoreo = $this->getMonitoreo(request()->get("categoria"), null);
+        $monitoreo = $monitoreo->groupBy('entidad_id')->map(function ($entidad) {
+            $entidad = $entidad[0];
+            $entidad->calculo = $this->calculo($entidad, null, null);
+            return $entidad;
+        });
+
         $seguimiento = $this->getSeguimiento(request()->get("categoria"), null);
+        $seguimiento = $seguimiento->groupBy('entidad_id')->map(function ($entidad) {
+            $entidad = $entidad[0];
+            $entidad->calculo = $this->calculo(null, $entidad, null);
+            return $entidad;
+        });
         $supervision = $this->getSupervision(request()->get("categoria"), null);
+        $supervision = $supervision->groupBy('entidad_id')->map(function ($entidad) {
+            $entidad = $entidad[0];
+            $entidad->calculo = $this->calculo(null, null, $entidad);
+            return $entidad;
+        });
+
+        $merged = collect([$monitoreo, $seguimiento, $supervision])->collapse();
+        $grouped = $merged->groupBy(function ($item, $key) {
+            return $item->entidad_id; // o el campo identificador de tu modelo
+        });
+        $data = collect();
+        foreach ($grouped as $entidad_id => $collection) {
+            $entidad = $collection->first();
+            $collection = $collection
+                ->pad(3, null)
+                ->map(function (MEntidadRegistrada|SEntidadRegistrada|SupervisionEntidadRegistrada|null $entidad) {
+                    if (!$entidad) {
+                        return [];
+                    }
+                    if ($entidad instanceof MEntidadRegistrada) {
+                        return ["monitoreo" => $this->calculoMonitoreo($entidad)];
+                    };
+                    if ($entidad instanceof SEntidadRegistrada) {
+                        return ["seguimiento" => $this->calculoSeguimiento($entidad)];
+                    };
+                    return ["supervision" => $this->calculoSupervision($entidad)];
+                })
+                ->collapse();
+
+            $data->push([
+                "entidad" => $entidad->entidad,
+                "departamento" => $entidad->departamento,
+                "provincia" => $entidad->provincia,
+                "distrito" => $entidad->distrito,
+                "respuestas" => [
+                    [
+                        "nombre" => "Monitoreo",
+                        "calculo" => $collection->get("monitoreo", 0),
+                    ],
+                    [
+                        "nombre" => "Seguimiento",
+                        "calculo" => $collection->get("seguimiento", 0),
+                    ],
+                    [
+                        "nombre" => "Supervision",
+                        "calculo" => $collection->get("supervision", 0)
+                    ]
+                ]
+            ]);
+        }
+        return $data;
+
+
 
         return response()->json([
             "respuestas" => compact(
