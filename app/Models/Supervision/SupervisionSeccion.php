@@ -12,6 +12,7 @@ class SupervisionSeccion extends Model
         'supervision_entidad_registrada_id',
         'nombre',
         'promedio',
+        'respuesta'
     ];
 
     public function entidad()
