@@ -25,7 +25,26 @@ $ docker compose up -d
 $ docker compse exec app composer install
 ```
 
-### 3. Correr migraciones
+### 3. Copiar archivo de entorno
+
+Ambiente de desarrollo
+
+```bash
+$ cp .env.dev .env
+```
+Ambiente de calidad
+
+```bash
+$ cp .env.qa .env
+```
+
+Ambiente de produccion
+
+```bash
+$ cp .env.prod .env
+```
+
+### 4. Correr migraciones
 Es necesario tener tu archivo .env, se puede copiar el archivo .env.example y
 colocarle estos valores
 ```
@@ -41,7 +60,7 @@ DB_PASSWORD=th1s@p4ssw0rd
 $ docker compose exec php artisan migrate:fresh --seed
 ```
 
-### 4. Generar key de aplicacion
+### 5. Generar key de aplicacion
 
 ```bash
 $ php artisan key:generate
@@ -55,7 +74,26 @@ $ php artisan key:generate
 $ composer install
 ```
 
-### 2. Correr migraciones
+### 2. Copiar archivo de entorno
+
+Ambiente de desarrollo
+
+```bash
+$ cp .env.dev .env
+```
+Ambiente de calidad
+
+```bash
+$ cp .env.qa .env
+```
+
+Ambiente de produccion
+
+```bash
+$ cp .env.prod .env
+```
+
+### 3. Correr migraciones
 Es necesario tener tu archivo .env, se puede copiar el archivo .env.example y
 colocarle estos valores
 ```
@@ -71,13 +109,13 @@ DB_PASSWORD=th1s@p4ssw0rd
 $ php artisan migrate:fresh --seed
 ```
 
-### 3. Generar key de aplicacion
+### 4. Generar key de aplicacion
 
 ```bash
 $ php artisan key:generate
 ```
 
-### 4. Correr Servidor
+### 5. Correr Servidor
 
 ```bash
 $ php artisan serve
