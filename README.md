@@ -1,4 +1,76 @@
-# Como levantar el proyecto
+## Forma de iniciar el proyecto con php
+
+### 1. Instalar dependencias
+
+```bash
+$ composer install
+```
+
+### 2. Copiar archivo de entorno
+
+Ambiente de desarrollo
+
+```bash
+$ cp .env.dev .env
+```
+Ambiente de calidad
+
+```bash
+$ cp .env.qa .env
+```
+
+Ambiente de produccion
+
+```bash
+$ cp .env.prod .env
+```
+
+### 3. Generar key de aplicacion
+
+```bash
+$ php artisan key:generate
+```
+
+### 4. Correr migraciones
+Es necesario tener tu archivo .env, se puede copiar el archivo .env.example y
+colocarle estos valores
+```
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=bd_simse
+DB_USERNAME=usuariosimse
+DB_PASSWORD=th1s@p4ssw0rd
+```
+
+Si lo levantas por primera vez:
+
+```bash
+$ php artisan migrate --seed
+```
+
+Si lo levantas posterior:
+
+```bash
+$ php artisan migrate:fresh --seed
+```
+
+### 5. Correr Servidor
+
+Puerto por defecto
+
+```bash
+$ php artisan serve
+```
+
+Puerto del .env 
+
+```bash
+$ php artisan serve --host=0.0.0.0 --port=$(grep APP_PORT .env | cut -d '=' -f2)
+```
+
+
+# Como levantar el proyecto en Docker
 Para levantar el proyecto se puede hacer de varias formas, se sugiere usar docker
 compose, para ello ir al apartado "Forma de iniciar el proyecto con Docker"
 si desea usar la linea de comandos de php puede ver el apartado "Forma de iniciar
@@ -65,60 +137,3 @@ $ docker compose exec php artisan migrate:fresh --seed
 ```bash
 $ php artisan key:generate
 ```
-
-## Forma de iniciar el proyecto con php
-
-### 1. Instalar dependencias
-
-```bash
-$ composer install
-```
-
-### 2. Copiar archivo de entorno
-
-Ambiente de desarrollo
-
-```bash
-$ cp .env.dev .env
-```
-Ambiente de calidad
-
-```bash
-$ cp .env.qa .env
-```
-
-Ambiente de produccion
-
-```bash
-$ cp .env.prod .env
-```
-
-### 3. Correr migraciones
-Es necesario tener tu archivo .env, se puede copiar el archivo .env.example y
-colocarle estos valores
-```
-DB_CONNECTION=pgsql
-DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_DATABASE=bd_simse
-DB_USERNAME=usuariosimse
-DB_PASSWORD=th1s@p4ssw0rd
-```
-
-```bash
-$ php artisan migrate:fresh --seed
-```
-
-### 4. Generar key de aplicacion
-
-```bash
-$ php artisan key:generate
-```
-
-### 5. Correr Servidor
-
-```bash
-$ php artisan serve
-```
-
-$ php artisan serve --host=0.0.0.0 --port=$(grep APP_PORT .env | cut -d '=' -f2)
