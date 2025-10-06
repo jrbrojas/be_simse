@@ -24,13 +24,13 @@ return new class extends Migration
             $table->unsignedBigInteger('categoria_id');
             $table->foreign('categoria_id')->references('id')->on('categorias_responsables');
 
-            $table->string('ubigeo');
+            $table->string('ubigeo')->nullable();
             //$table->foreign('ubigeo')->references('ubigeo')->on('distritos');
 
-            $table->string('provincia_id');
+            $table->string('provincia_id')->nullable();
             //$table->foreign('provincia_id')->references('idprov')->on('provincias');
 
-            $table->string('departamento_id');
+            $table->string('departamento_id')->nullable();
             //$table->foreign('departamento_id')->references('iddpto')->on('departamentos');
 
             $table->timestamps();
