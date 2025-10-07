@@ -25,7 +25,8 @@ class EntidadRegistradaController extends Controller
             ->firstOrFail();
         $e->file_url = "";
         if ($e->file) {
-            $e->file_url = url('/files/' . $e->file->id);
+            $data = ['type' => 'monitoreo', 'id' => $e->file->id];
+            $e->file_url = route('anyfiles.show', $data);
         }
         return $e;
     }

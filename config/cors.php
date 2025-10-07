@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'files/*'],
     'allowed_methods' => ['*'],
     'allowed_origins' => explode(',', env('CORS_ALLOWED_ORIGINS', '*')),
     'allowed_origins_patterns' => [],
