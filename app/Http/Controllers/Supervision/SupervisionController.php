@@ -105,8 +105,10 @@ class SupervisionController extends Controller
 
             // 3) Calcular promedio de la sección
             $promedioSeccion = 0;
-            $promedioSeccion = round($sumaPorcentajes / 4, 2);
-            $seccion->update(['promedio' => $promedioSeccion]);
+            if ($cantidadItems > 0) {
+                $promedioSeccion = round($sumaPorcentajes / $cantidadItems, 2);
+                $seccion->update(['promedio' => $promedioSeccion]);
+            }
 
             // acumular para promedio final
             $sumaPromediosSecciones += $promedioSeccion;
