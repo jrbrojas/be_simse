@@ -126,17 +126,12 @@ oreach($respuestasAgrupadas as $op => $grupo)
                         @if($resp->files && $resp->files->count())
                             @foreach($resp->files as $file)
                             <div>
-                                    @php
-                                        // Construir la URL pública a partir del path
-                                        $url = url('/files/' . $file->id);
-                                    @endphp
-
                                     {{-- Mostrar descripción si existe, sino el nombre --}}
-                                    <a href="{{ $url }}" target="_blank">
-                                        {{ $file->description ?? basename($file->path) }}
+                                    <a href="{{ $file->url }}" target="_blank">
+                                        {{ $file->descripcion ?? basename($file->url) }}
                                     </a>
                                     <br>
-                                    <small style="color:#666;">{{ $url }}</small>
+                                    <small style="color:#666;">{{ $file->url }}</small>
                             </div>
                             @endforeach
                         @else
