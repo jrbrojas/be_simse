@@ -26,21 +26,22 @@ class Responsable extends Model
         'id_departamento',
         'id_provincia',
         'id_entidad',
+        'id_distrito',
         'ubigeo',
     ];
 
     public function distrito()
     {
-        return $this->belongsTo(Ubigeo::class, "ubigeo", "ubigeo");
+        return $this->belongsTo(Ubigeo::class, "id_distrito", "id");
     }
 
     public function provincia()
     {
-        return $this->belongsTo(Prov::class, "id_provincia", "idprov");
+        return $this->belongsTo(Prov::class, "id_provincia", "id");
     }
 
     public function departamento()
     {
-        return $this->belongsTo(Depa::class, "id_departamento", "iddpto");
+        return $this->belongsTo(Depa::class, "id_departamento", "id");
     }
 }

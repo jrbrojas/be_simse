@@ -11,13 +11,6 @@ class DepasImport implements ToModel, WithHeadingRow
 {
     public function model(array $row): Depa
     {
-        $d = new Depa([
-            "iddpto" => $row['iddpto'],
-            "nombre" => $row['nombdpto'],
-            "capital" => $row['capital'],
-        ]);
-        $d->created_at = Carbon::now();
-        $d->updated_at = Carbon::now();
-        return $d;
+        return new Depa($row);
     }
 }

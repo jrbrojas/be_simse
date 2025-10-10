@@ -45,11 +45,11 @@ class EntidadRegistrada extends Model
 
     public function provincia()
     {
-        return $this->belongsTo(Prov::class, "provincia_idprov", "idprov");
+        return $this->belongsTo(Prov::class, "provincia_idprov", "id");
     }
 
     public function departamento()
     {
-        return $this->belongsTo(Depa::class, "departamento_iddpto", "iddpto");
+        return $this->belongsTo(Depa::class, "departamento_iddpto", "id");
     }
 }

@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Directorio;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\DataUbicacion;
+use App\Models\Depa;
 use App\Models\Directorio\CargoResponsable;
 use App\Models\Directorio\CategoriaResponsable;
 use App\Models\Directorio\EntidadRegistrada;
 use App\Models\Directorio\Responsable;
 use App\Http\Requests\Directorio\ResponsableStoreRequest;
 use App\Models\Directorio\RolResponsable;
+use App\Models\Prov;
+use App\Models\Ubigeo;
 use Illuminate\Http\Request;
 
 class ResponsableController extends Controller
@@ -60,6 +63,11 @@ class ResponsableController extends Controller
         $first->categoria_id = $data['id_categoria'];
         $first->fecha_registro = $data['fecha_registro'];
         $first->save();
+
+        $data["id_distrito"] = Ubigeo::query()
+            ->where('ubigeo', $data['ubigeo'])
+            ->firstOrFail()
+            ->id;
 
         $entidad = new Responsable();
         $entidad->fill($data);

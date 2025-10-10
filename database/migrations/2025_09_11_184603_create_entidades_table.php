@@ -27,11 +27,14 @@ return new class extends Migration
             $table->string('ubigeo')->nullable();
             //$table->foreign('ubigeo')->references('ubigeo')->on('distritos');
 
-            $table->string('provincia_id')->nullable();
-            //$table->foreign('provincia_id')->references('idprov')->on('provincias');
+            $table->unsignedBigInteger('distrito_id')->nullable();
+            $table->foreign('distrito_id')->references('id')->on('distritos');
 
-            $table->string('departamento_id')->nullable();
-            //$table->foreign('departamento_id')->references('iddpto')->on('departamentos');
+            $table->unsignedBigInteger('provincia_id')->nullable();
+            $table->foreign('provincia_id')->references('id')->on('provincias');
+
+            $table->unsignedBigInteger('departamento_id')->nullable();
+            $table->foreign('departamento_id')->references('id')->on('departamentos');
 
             $table->timestamps();
         });

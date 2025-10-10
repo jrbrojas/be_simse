@@ -13,15 +13,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            DepasImportSeeder::class,
-            ProvsImportSeeder::class,
-            UbigeoImportSeeder::class,
             CategoriasResponsablesSeeder::class,
-            EntidadesImportSeeder::class,
             RolesSeeder::class,
             UserSeeder::class,
             CargosResponsablesSeeder::class,
             RolesResponsablesSeeder::class,
+            EntidadesYCentrosPoblados::class,
         ]);
     }
 }

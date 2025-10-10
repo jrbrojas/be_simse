@@ -49,18 +49,18 @@ class DirectorioController extends Controller
         $responsables = Responsable::query()
             ->select(
                 'responsables.*',
-                'distritos.ubigeo',
+                'entidades.ubigeo',
                 'entidades.nombre as nombre_entidad',
                 'departamentos.nombre as departamento',
                 'provincias.nombre as provincia',
-                'distritos.distrito as distrito',
+                'distritos.nombre as distrito',
                 'categorias_responsables.nombre as categoria',
             )
             ->leftJoin('categorias_responsables', 'responsables.id_categoria', '=', 'categorias_responsables.id')
-            ->leftJoin('distritos', 'responsables.ubigeo', '=', 'distritos.ubigeo')
+            ->leftJoin('distritos', 'responsables.id_distrito', '=', 'distritos.id')
             ->leftJoin('entidades', 'responsables.id_entidad', '=', 'entidades.id')
-            ->leftJoin('departamentos', 'responsables.id_departamento', '=', 'departamentos.iddpto')
-            ->leftJoin('provincias', 'responsables.id_provincia', '=', 'provincias.idprov')
+            ->leftJoin('departamentos', 'responsables.id_departamento', '=', 'departamentos.id')
+            ->leftJoin('provincias', 'responsables.id_provincia', '=', 'provincias.id')
             ->whereIn('responsables.id', $latestIds)
             ->get();
         return $responsables;

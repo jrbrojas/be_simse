@@ -53,7 +53,7 @@ class Entidad extends Model
      */
     public function distrito()
     {
-        return $this->belongsTo(Ubigeo::class, 'ubigeo', 'ubigeo');
+        return $this->belongsTo(Ubigeo::class, 'distrito_id', 'id');
     }
 
     /**
@@ -61,14 +61,7 @@ class Entidad extends Model
      */
     public function provincia()
     {
-        return $this->hasOneThrough(
-            Prov::class,   // modelo final
-            Ubigeo::class,    // modelo intermedio
-            'ubigeo',           // FK en distritos que coincide con entidades.ubigeo
-            'idprov',           // FK en provincias que coincide con distritos.idprov
-            'ubigeo',           // clave local en entidades
-            'idprov'            // clave local en distritos
-        );
+        return $this->belongsTo(Prov::class, 'provincia_id', 'id');
     }
 
     /**
@@ -76,7 +69,7 @@ class Entidad extends Model
      */
     public function departamento()
     {
-        return $this->belongsTo(Depa::class, "departamento_id", "iddpto");
+        return $this->belongsTo(Depa::class, "departamento_id", "id");
     }
 
     /**
