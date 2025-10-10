@@ -19,7 +19,7 @@ class EntidadesYCentrosPoblados extends Seeder
             ProvsImportSeeder::class,
             UbigeoImportSeeder::class,
             EntidadesImportSeeder::class,
-            //CentrosPobladosImportSeeder::class,
+            CentrosPobladosImportSeeder::class,
         ]);
     }
 }
