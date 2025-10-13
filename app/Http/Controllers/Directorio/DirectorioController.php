@@ -38,13 +38,13 @@ class DirectorioController extends Controller
         $latestIds = DB::table('responsables as r')
             ->select(DB::raw('MAX(id) as id'))
             ->join(
-                DB::raw('(SELECT ubigeo, MAX(fecha_fin) AS max_fecha FROM responsables GROUP BY ubigeo) m'),
+                DB::raw('(SELECT id_entidad, MAX(fecha_fin) AS max_fecha FROM responsables GROUP BY id_entidad) m'),
                 function ($join) {
-                    $join->on('r.ubigeo', '=', 'm.ubigeo')
+                    $join->on('r.id_entidad', '=', 'm.id_entidad')
                          ->on('r.fecha_fin', '=', 'm.max_fecha');
                 }
             )
-            ->groupBy('r.ubigeo')
+            ->groupBy('r.id_entidad')
             ->pluck('id');
         $responsables = Responsable::query()
             ->select(
@@ -55,12 +55,19 @@ class DirectorioController extends Controller
                 'provincias.nombre as provincia',
                 'distritos.nombre as distrito',
                 'categorias_responsables.nombre as categoria',
+                'cargos_responsables.nombre as cargo',
+                'roles_responsables.nombre as rol',
             )
             ->leftJoin('categorias_responsables', 'responsables.id_categoria', '=', 'categorias_responsables.id')
             ->leftJoin('distritos', 'responsables.id_distrito', '=', 'distritos.id')
             ->leftJoin('entidades', 'responsables.id_entidad', '=', 'entidades.id')
             ->leftJoin('departamentos', 'responsables.id_departamento', '=', 'departamentos.id')
             ->leftJoin('provincias', 'responsables.id_provincia', '=', 'provincias.id')
+            ->leftJoin('cargos_responsables', 'cargos_responsables.id', '=', 'responsables.id_cargo')
+            ->leftJoin('roles_responsables', 'roles_responsables.id', '=', 'responsables.id_rol')
+            ->when(request('categoria'), function ($query, $categoria) {
+                $query->where('responsables.id_categoria', $categoria);
+            })
             ->whereIn('responsables.id', $latestIds)
             ->get();
         return $responsables;
