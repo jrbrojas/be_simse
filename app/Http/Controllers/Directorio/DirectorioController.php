@@ -65,6 +65,9 @@ class DirectorioController extends Controller
             ->leftJoin('provincias', 'responsables.id_provincia', '=', 'provincias.id')
             ->leftJoin('cargos_responsables', 'cargos_responsables.id', '=', 'responsables.id_cargo')
             ->leftJoin('roles_responsables', 'roles_responsables.id', '=', 'responsables.id_rol')
+            ->when(request('distrito'), function ($query, $distrito) {
+                $query->where('responsables.id_distrito', $distrito);
+            })
             ->when(request('categoria'), function ($query, $categoria) {
                 $query->where('responsables.id_categoria', $categoria);
             })
