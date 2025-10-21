@@ -71,6 +71,16 @@ class DirectorioController extends Controller
             ->when(request('categoria'), function ($query, $categoria) {
                 $query->where('responsables.id_categoria', $categoria);
             })
+            ->when(request('q'), function ($query, $search) {
+                $search = strtolower($search);
+                $query->where(
+                    fn($query) => $query
+                        ->whereRaw('LOWER(entidades.nombre) LIKE ?', ["%{$search}%"])
+                        ->orWhere('responsables.dni', 'like', "%{$search}%")
+                        ->orWhereRaw('LOWER(responsables.nombre) LIKE ?', ["%{$search}%"])
+                        ->orWhereRaw('LOWER(responsables.apellido) LIKE ?', ["%{$search}%"])
+                );
+            })
             ->whereIn('responsables.id', $latestIds)
             ->get();
         return $responsables;
