@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Monitoreo;
 
 use App\Http\Controllers\Controller;
 use App\Models\Monitoreo\EntidadRegistrada;
+use App\Models\Monitoreo\Monitoreo;
+use App\Models\Monitoreo\MonitoreoRespuesta;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Storage;
-
 
 class EntidadRegistradaController extends Controller
 {
@@ -33,8 +33,8 @@ class EntidadRegistradaController extends Controller
 
     public function exportPdf(int $entidad)
     {
-        $data = EntidadRegistrada::with([
-            'entidad',
+        $data = Monitoreo::with([
+            'files',
             'categoria',
             'departamento',
             'provincia',

@@ -39,28 +39,6 @@ class EntidadRegistradaController extends Controller
         ]);
     }
 
-    public function exportPdf(int $entidad)
-    {
-        $data = EntidadRegistrada::with([
-            'entidad',
-            'categoria',
-            'departamento',
-            'provincia',
-            'distrito',
-            'respuestas'
-        ])->findOrFail($entidad);
-
-        //$respuestasAgrupadas = $data->respuestas->groupBy('instrumento');
-
-        $pdf = Pdf::loadView('pdf.seguimiento_reporte', [
-            'data' => $data,
-            'respuestasAgrupadas' => $data
-        ])
-        ->setPaper('a4', 'portrait');
-
-        return $pdf->stream("reporte_entidad_{$entidad}.pdf");
-    }
-
     public function historial(EntidadRegistrada $entidad)
     {
         return EntidadRegistrada::query()

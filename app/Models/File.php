@@ -13,6 +13,8 @@ class File extends Model
         'disk',
         'size',
         'description',
+        'aprovado',
+        'porcentaje',
         'mime_type',
         'extra',
     ];

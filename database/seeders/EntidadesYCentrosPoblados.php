@@ -15,9 +15,9 @@ class EntidadesYCentrosPoblados extends Seeder
     public function run(): void
     {
         $this->call([
-            DepasImportSeeder::class,
-            ProvsImportSeeder::class,
-            UbigeoImportSeeder::class,
+            DepartamentosImportSeeder::class,
+            ProvinciasImportSeeder::class,
+            DistritosImportSeeder::class,
             EntidadesImportSeeder::class,
             CentrosPobladosImportSeeder::class,
         ]);

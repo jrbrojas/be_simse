@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Depa;
+use App\Models\Departamento;
 
 class DepartmentController extends Controller
 {
     public function index()
     {
-        return Depa::all();
+        return Departamento::all();
     }
 }

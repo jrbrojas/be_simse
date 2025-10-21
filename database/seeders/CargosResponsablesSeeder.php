@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Directorio\CargoResponsable;
+use App\Models\Directorio\Cargo;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -24,6 +24,6 @@ class CargosResponsablesSeeder extends Seeder
             ['nombre' => 'Analista'],
             ['nombre' => 'Asistente'],
         ];
-        CargoResponsable::query()->insert($data);
+        Cargo::query()->insert($data);
     }
 }

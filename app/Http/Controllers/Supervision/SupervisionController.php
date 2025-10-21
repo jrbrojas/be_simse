@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Supervision;
 
 use App\Http\Controllers\Controller;
+use App\Models\Supervision\Supervision;
 use App\Models\Supervision\SupervisionEntidadRegistrada;
 use App\Models\Supervision\SupervisionSeccion;
 use App\Models\Supervision\SupervisionItem;
@@ -13,27 +14,11 @@ class SupervisionController extends Controller
 {
     public function index()
     {
-        // Obtenemos el último registro por entidad_id
-        $ids = SupervisionEntidadRegistrada::query()
-            ->select(DB::raw('MAX(id) as max_id'))
-            ->groupBy('entidad_id')
-            ->pluck('max_id')
-            ->toArray();
-
-        // Devolvemos las entidades con sus relaciones
-        return SupervisionEntidadRegistrada::with([
-            'entidad',
-            'categoria',
-            'departamento',
-            'secciones',
-            'provincia',
-            'distrito',
-        ])
-        ->when(request()->get('categoria'), function ($query, $categoria) {
-            $query->where('categoria_responsable_id', $categoria);
-        })
-        ->whereIn('id', $ids)
-        ->get();
+        return Supervision::with('entidad.distrito.provincia.departamento')
+            ->when(request()->get("categoria"), function ($query, $categoria) {
+                $query->where('categoria_id', $categoria);
+            })
+            ->get();
     }
 
     public function store(Request $request)
@@ -128,9 +113,12 @@ class SupervisionController extends Controller
         );
     }
 
-    public function show(int $id)
+    public function show(Supervision $supervision)
     {
-        return SupervisionEntidadRegistrada::with(['secciones', 'items', 'files'])->findOrFail($id);
+        return $supervision->load([
+            'entidad.distrito.provincia.departamento',
+            'supervision_respuestas.files'
+        ]);
     }
 }
 

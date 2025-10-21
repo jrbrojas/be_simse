@@ -3,47 +3,65 @@
 namespace App\Http\Controllers\Seguimiento;
 
 use App\Http\Controllers\Controller;
-use App\Models\Seguimiento\EntidadRegistrada;
-use Illuminate\Support\Facades\DB;
+use App\Http\Requests\Seguimiento\RespuestaStore;
+use App\Models\Seguimiento\Seguimiento;
+use App\Models\Seguimiento\SeguimientoRespuesta;
 
 class SeguimientoController extends Controller
 {
     public function index()
     {
-        // Obtenemos el último registro por entidad_id
-        $ids = EntidadRegistrada::query()
-            ->select(DB::raw('MAX(id) as max_id'))
-            ->groupBy('entidad_id')
-            ->pluck('max_id')
-            ->toArray();
-
-        // Devolvemos las entidades con sus relaciones
-        return EntidadRegistrada::with([
-            'entidad',
-            'categoria',
-            'departamento',
-            'respuestas',
-            'provincia',
-            'distrito',
-            'file'
-        ])
-        ->when(request()->get('categoria'), function ($query, $categoria) {
-            $query->where('categoria_responsable_id', $categoria);
-        })
-        ->whereIn('id', $ids)
-        ->get();
+        return Seguimiento::with('entidad.distrito.provincia.departamento')
+            ->when(request()->get("categoria"), function ($query, $categoria) {
+                $query->where('categoria_id', $categoria);
+            })
+            ->get();
     }
 
-    public function show(int $id)
+    public function show(Seguimiento $seguimiento)
     {
-        return EntidadRegistrada::with([
-            'entidad',
-            'categoria',
-            'departamento',
-            'provincia',
-            'respuestas',
-            'distrito',
-            'file'
-        ])->findOrFail($id);
+        return $seguimiento::load([
+            'entidad.distrito.provincia.departamento',
+            'monitoreo_respuestas.files',
+        ]);
+    }
+
+    public function store(RespuestaStore $request)
+    {
+
+        $er = Seguimiento::query()->create([
+            'entidad_id' => $request->entidad_id,
+            'anio' => $request->anio,
+        ]);
+
+        foreach ($request->respuestas as $respuestaData) {
+            $respuesta = SeguimientoRespuesta::query()->create([
+                'seguimiento_id' => $er->id,
+                'instrumento' => $respuestaData['instrumento'],
+                'respuesta'   => $respuestaData['respuesta'], // "si" o "no"
+            ]);
+
+            if (!empty($respuestaData['files'])) {
+                foreach ($respuestaData['files'] as $uploadedFile) {
+                    $file = $uploadedFile['file'];
+                    $path = $file->store('seguimiento/respuestas');
+
+                    $respuesta->files()->create([
+                        'name' => $file->getClientOriginalName(),
+                        'path' => $path,
+                        'disk' => 'local',
+                        'size' => $file->getSize(),
+                        'mime_type' => $file->getClientMimeType(),
+                        'descripcion' => $uploadedFile['descripcion'] ?? null,
+                        'aprobado' => ($uploadedFile['aprobado'] ?? 'no') === 'si' ? 'si' : 'no',
+                    ]);
+                }
+            }
+        }
+
+        return response()->json(
+            $er->load('entidad.distrito.provincia.departamento'),
+            201
+        );
     }
 }

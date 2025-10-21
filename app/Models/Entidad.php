@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\Directorio\CategoriaResponsable;
+use App\Models\Directorio\Categoria;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Entidad extends Model
 {
-    protected $table = 'entidades';
     /**
      * The attributes that are mass assignable.
      *
@@ -17,14 +15,11 @@ class Entidad extends Model
      */
     protected $fillable = [
         'name',
-        'departamento_id',
-        'provincia_id',
+        'categoria_id',
         'distrito_id',
-        'ubigueo',
         'nombre',
         'tipo',
         'fecha_registro',
-        'ubigeo',
         'anio',
     ];
 
@@ -49,34 +44,18 @@ class Entidad extends Model
     }
 
     /**
-     * @return BelongsTo<Ubigeo>
+     * @return BelongsTo<Distrito>
      */
     public function distrito()
     {
-        return $this->belongsTo(Ubigeo::class, 'distrito_id', 'id');
+        return $this->belongsTo(Distrito::class);
     }
 
     /**
-     * @return HasOneThrough<Prov>
-     */
-    public function provincia()
-    {
-        return $this->belongsTo(Prov::class, 'provincia_id', 'id');
-    }
-
-    /**
-     * @return BelongsTo<Depa>
-     */
-    public function departamento()
-    {
-        return $this->belongsTo(Depa::class, "departamento_id", "id");
-    }
-
-    /**
-     * @return BelongsTo<CategoriaResponsable>
+     * @return BelongsTo<Categoria>
      */
     public function categoria()
     {
-        return $this->belongsTo(CategoriaResponsable::class, 'categoria_id', 'id');
+        return $this->belongsTo(Categoria::class);
     }
 }

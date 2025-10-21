@@ -18,10 +18,12 @@ return new class extends Migration
             $table->string('path');
             $table->string('disk');
             $table->integer('size');
-            $table->string('description')->nullable();
             $table->string('mime_type')->nullable();
-
+            $table->string('description')->nullable();
             $table->json('extra')->nullable();
+
+            $table->string('aprobado')->nullable();
+            $table->decimal('porcentaje', 5, 2)->nullable();
 
             $table->timestamps();
         });
