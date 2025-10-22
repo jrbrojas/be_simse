@@ -65,6 +65,9 @@ class DirectorioController extends Controller
             ->leftJoin('provincias', 'responsables.id_provincia', '=', 'provincias.id')
             ->leftJoin('cargos_responsables', 'cargos_responsables.id', '=', 'responsables.id_cargo')
             ->leftJoin('roles_responsables', 'roles_responsables.id', '=', 'responsables.id_rol')
+            ->when(request('entidad'), function ($query, $entidad) {
+                $query->where('responsables.id_entidad', $entidad);
+            })
             ->when(request('distrito'), function ($query, $distrito) {
                 $query->where('responsables.id_distrito', $distrito);
             })
@@ -79,6 +82,11 @@ class DirectorioController extends Controller
                         ->orWhere('responsables.dni', 'like', "%{$search}%")
                         ->orWhereRaw('LOWER(responsables.nombre) LIKE ?', ["%{$search}%"])
                         ->orWhereRaw('LOWER(responsables.apellido) LIKE ?', ["%{$search}%"])
+                        // concat nombre y apellido
+                        ->orWhereRaw(
+                            "LOWER(CONCAT(responsables.nombre, ' ', responsables.apellido)) LIKE ?",
+                            ["%{$search}%"],
+                        )
                 );
             })
             ->whereIn('responsables.id', $latestIds)
