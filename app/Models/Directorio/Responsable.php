@@ -3,6 +3,7 @@
 namespace App\Models\Directorio;
 
 use App\Models\Depa;
+use App\Models\Entidad;
 use App\Models\Prov;
 use App\Models\Ubigeo;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,11 @@ class Responsable extends Model
         'id_distrito',
         'ubigeo',
     ];
+
+    public function entidad()
+    {
+        return $this->belongsTo(Entidad::class, 'id_entidad');
+    }
 
     public function distrito()
     {

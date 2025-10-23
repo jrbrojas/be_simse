@@ -29,6 +29,10 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::get('/directorio/categorias', [\App\Http\Controllers\Directorio\ResponsableController::class, 'categorias']);
     Route::get('/directorio/roles', [\App\Http\Controllers\Directorio\ResponsableController::class, 'roles']);
     Route::get('/directorio/cargos', [\App\Http\Controllers\Directorio\ResponsableController::class, 'cargos']);
+    Route::get(
+        '/directorio/exportar-excel',
+        [\App\Http\Controllers\Directorio\DirectorioController::class, 'exportarExcel'],
+    )->name("directorio.exportar-excel");
 
     // monitoreo
     Route::get('/monitoreo', [\App\Http\Controllers\Monitoreo\MonitoreoController::class, 'index']);

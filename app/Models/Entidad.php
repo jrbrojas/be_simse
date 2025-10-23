@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Directorio\CategoriaResponsable;
+use App\Models\Directorio\Responsable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
@@ -46,6 +47,11 @@ class Entidad extends Model
         return [
             'fecha_registro' => 'date',
         ];
+    }
+
+    public function responsables()
+    {
+        return $this->hasMany(Responsable::class, 'id_entidad');
     }
 
     /**

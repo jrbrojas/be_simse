@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Directorio;
 
+use App\Exports\Directorio\ResponsablesDeEntidades;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\DataUbicacion;
 use App\Models\Directorio\EntidadRegistrada;
@@ -15,6 +16,18 @@ use Illuminate\Support\Facades\DB;
 class DirectorioController extends Controller
 {
     use DataUbicacion;
+
+    public function exportarExcel()
+    {
+        $entidades = request()->query('entidad', []);
+        if (
+            is_array($entidades) &&
+            count($entidades) > 0
+        ) {
+            return (new ResponsablesDeEntidades($entidades))->download('responsables.xlsx');
+        }
+        abort(404);
+    }
 
     public function getEntidad(int $entidad)
     {
@@ -47,6 +60,12 @@ class DirectorioController extends Controller
             ->groupBy('r.id_entidad')
             ->pluck('id');
         $responsables = Responsable::query()
+            ->with([
+                // historial
+                'entidad.responsables' => function ($query) use ($latestIds) {
+                    $query->whereNotIn('responsables.id', $latestIds);
+                },
+            ])
             ->select(
                 'responsables.*',
                 'entidades.ubigeo',
@@ -91,6 +110,10 @@ class DirectorioController extends Controller
             })
             ->whereIn('responsables.id', $latestIds)
             ->get();
-        return $responsables;
+        return $responsables->map(function ($responsable) {
+            $responsable->historial = $responsable->entidad->responsables;
+            unset($responsable->entidad->responsables);
+            return $responsable;
+        });
     }
 }
