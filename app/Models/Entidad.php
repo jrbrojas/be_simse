@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\Directorio\CategoriaResponsable;
-use App\Models\Directorio\Responsable;
+use App\Models\Directorio\Categoria;
+use App\Models\Monitoreo\Monitoreo;
+use App\Models\Seguimiento\Seguimiento;
+use App\Models\Supervision\Supervision;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Entidad extends Model
 {
@@ -18,14 +19,11 @@ class Entidad extends Model
      */
     protected $fillable = [
         'name',
-        'departamento_id',
-        'provincia_id',
+        'categoria_id',
         'distrito_id',
-        'ubigueo',
         'nombre',
         'tipo',
         'fecha_registro',
-        'ubigeo',
         'anio',
     ];
 
@@ -49,40 +47,34 @@ class Entidad extends Model
         ];
     }
 
-    public function responsables()
-    {
-        return $this->hasMany(Responsable::class, 'id_entidad');
-    }
-
     /**
-     * @return BelongsTo<Ubigeo>
+     * @return BelongsTo<Distrito>
      */
     public function distrito()
     {
-        return $this->belongsTo(Ubigeo::class, 'distrito_id', 'id');
+        return $this->belongsTo(Distrito::class);
     }
 
     /**
-     * @return HasOneThrough<Prov>
-     */
-    public function provincia()
-    {
-        return $this->belongsTo(Prov::class, 'provincia_id', 'id');
-    }
-
-    /**
-     * @return BelongsTo<Depa>
-     */
-    public function departamento()
-    {
-        return $this->belongsTo(Depa::class, "departamento_id", "id");
-    }
-
-    /**
-     * @return BelongsTo<CategoriaResponsable>
+     * @return BelongsTo<Categoria>
      */
     public function categoria()
     {
-        return $this->belongsTo(CategoriaResponsable::class, 'categoria_id', 'id');
+        return $this->belongsTo(Categoria::class);
+    }
+
+    public function monitoreos()
+    {
+        return $this->hasMany(Monitoreo::class);
+    }
+
+    public function seguimientos()
+    {
+        return $this->hasMany(Seguimiento::class);
+    }
+
+    public function supervisions()
+    {
+        return $this->hasMany(Supervision::class);
     }
 }

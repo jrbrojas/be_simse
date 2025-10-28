@@ -13,6 +13,9 @@ class EntidadesImport implements ToModel, WithHeadingRow
     {
         unset($row['id']);
         unset($row['nivel_id']);
+        unset($row['provincia_id']);
+        unset($row['departamento_id']);
+        unset($row['ubigeo']);
 
         $e = new Entidad($row);
         $e->created_at = Carbon::now();

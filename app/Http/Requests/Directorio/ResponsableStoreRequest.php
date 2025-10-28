@@ -31,13 +31,12 @@ class ResponsableStoreRequest extends FormRequest
             'fecha_fin' => 'required|date',
             'fecha_registro' => 'required|date',
             'id_entidad' => 'required|exists:Entidades,id',
-            'id_cargo' => 'required|exists:cargos_responsables,id',
-            'id_categoria' => 'required|exists:categorias_responsables,id',
+            'id_cargo' => 'required|exists:cargos,id',
+            'id_categoria' => 'required|exists:categorias,id',
             'id_rol' => 'required|exists:roles_responsables,id',
             'id_departamento' => 'required|exists:departamentos,id',
             'id_provincia' => 'required|exists:provincias,id',
             'id_entidad' => 'required',
-            'ubigeo' => 'required|exists:distritos,ubigeo',
         ];
     }
 }

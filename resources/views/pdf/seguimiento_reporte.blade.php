@@ -69,25 +69,25 @@
         <tr>
             <td style="width:25%;">
                 <div class="label">DEPARTAMENTO</div>
-                <div class="value">{{ $data->departamento->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->distrito->provincia->departamento->nombre ?? '-' }}</div>
             </td>
             <td style="width:25%;">
                 <div class="label">PROVINCIA</div>
-                <div class="value">{{ $data->provincia->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->distrito->provincia->nombre ?? '-' }}</div>
             </td>
             <td style="width:25%;">
                 <div class="label">DISTRITO</div>
-                <div class="value">{{ $data->distrito->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->distrito->nombre ?? '-' }}</div>
             </td>
             <td style="width:25%;">
                 <div class="label">UBIGEO</div>
-                <div class="value">{{ $data->distrito->ubigeo ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->distrito->codigo ?? '-' }}</div>
             </td>
         </tr>
         <tr>
             <td colspan="2">
                 <div class="label">CATEGORÍA</div>
-                <div class="value">{{ $data->categoria->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->categoria->nombre ?? '-' }}</div>
             </td>
             <td colspan="2" style="text-align:right;">
                 <div class="label">FECHA DE ACTUALIZACIÓN DE INDICADORES</div>
@@ -118,13 +118,13 @@ oreach($respuestasAgrupadas as $op => $grupo)
             </tr>
         </thead>
         <tbody>
-            @foreach($respuestasAgrupadas->respuestas as $resp)
+            @foreach($respuestasAgrupadas as $instrumento => $resp)
                 <tr>
-                    <td>{{ $resp->instrumento ?? '-' }}</td>
-                    <td>{{ strtoupper($resp->respuesta ?? '-') }}</td>
+                    <td>{{ $instrumento ?? '-' }}</td>
+                    <td>{{ strtoupper($resp[0]->respuesta ?? '-') }}</td>
                     <td>
-                        @if($resp->files && $resp->files->count())
-                            @foreach($resp->files as $file)
+                        @if($resp[0]->files && $resp[0]->files->count())
+                            @foreach($resp[0]->files as $file)
                             <div>
                                     {{-- Mostrar descripción si existe, sino el nombre --}}
                                     <a href="{{ $file->url }}" target="_blank">

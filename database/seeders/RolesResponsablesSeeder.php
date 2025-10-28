@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Directorio\RolResponsable;
+use App\Models\Directorio\RolesResponsable;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -19,6 +19,6 @@ class RolesResponsablesSeeder extends Seeder
             ['nombre' => 'Responsable de GRD'],
             ['nombre' => 'Autoridad'],
         ];
-        RolResponsable::query()->insert($data);
+        RolesResponsable::query()->insert($data);
     }
 }

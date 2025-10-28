@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Csv;
 
-use App\Models\CentroPoblado;
+use App\Models\CentrosPoblado;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -10,9 +10,10 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class CentrosPobladosImport implements ToModel, WithHeadingRow, WithBatchInserts, WithChunkReading
 {
-    public function model(array $row): CentroPoblado
+    public function model(array $row): CentrosPoblado
     {
-        return new CentroPoblado($row);
+        unset($row['ubigeo_distrito']);
+        return new CentrosPoblado($row);
     }
 
     public function batchSize(): int

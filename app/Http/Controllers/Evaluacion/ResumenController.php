@@ -4,221 +4,169 @@ namespace App\Http\Controllers\Evaluacion;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Evaluacion\Traits\Calculo;
-use App\Models\Monitoreo\EntidadRegistrada as MEntidadRegistrada;
-use App\Models\Seguimiento\EntidadRegistrada as SEntidadRegistrada;
-use App\Models\Supervision\SupervisionEntidadRegistrada;
+use App\Models\Monitoreo\Monitoreo;
+use App\Models\Seguimiento\Seguimiento;
+use App\Models\Supervision\Supervision;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class ResumenController extends Controller
 {
     use Calculo;
 
-    public function getMonitoreo(?int $categoria, ?int $entidad_id): MEntidadRegistrada | null | Collection
+    /**
+     * @return Collection<int,Monitoreo>
+     */
+    public function getMonitoreo(?int $categoria = null, ?int $entidad_id = null): Collection
     {
+        $ids = Monitoreo::query()
+            ->when(request()->get("categoria"), function ($query, $categoria) {
+                $query->whereRelation('entidad', 'categoria_id', $categoria);
+            })
+            ->select(DB::raw('MAX(id) as id'))
+            ->groupBy('entidad_id')
+            ->get()
+            ->pluck('id');
 
-        if ($categoria) {
-
-            $ids = MEntidadRegistrada::query()
-                ->select(DB::raw('MAX(id) as max_id'))
-                ->groupBy('entidad_id')
-                ->get();
-
-            $ids = $ids->pluck('max_id')->toArray();
-
-            return MEntidadRegistrada::with([
-                'entidad',
-                'respuestas',
-                'departamento',
-                'provincia',
-                'distrito'
-            ])
-                ->when(request()->get("categoria"), function ($query, $categoria) {
-                    $query->where('categoria_responsable_id', $categoria);
-                })
-                ->whereIn('id', $ids)->get();
+        if ($ids->isEmpty()) {
+            return collect([]);
         }
 
-        return MEntidadRegistrada::query()
-            ->with(['respuestas.files',])
-            ->where('entidad_id', $entidad_id)
-            ->orderBy('id', 'desc')
-            ->first();
-    }
-
-    public function getSeguimiento(?int $categoria, ?int $entidad_id): SEntidadRegistrada | null | Collection
-    {
-        if ($categoria) {
-            // Obtenemos el último registro por entidad_id
-            $ids = SEntidadRegistrada::query()
-                ->select(DB::raw('MAX(id) as max_id'))
-                ->groupBy('entidad_id')
-                ->pluck('max_id')
-                ->toArray();
-
-            // Devolvemos las entidades con sus relaciones
-            return SEntidadRegistrada::with([
-                'entidad',
-                'categoria',
-                'departamento',
-                'respuestas',
-                'provincia',
-                'distrito',
-                'file'
+        return Monitoreo::with([
+                'file',
+                'entidad.categoria',
+                'entidad.distrito.provincia.departamento',
+                'monitoreo_respuestas'
             ])
-                ->when(request()->get('categoria'), function ($query, $categoria) {
-                    $query->where('categoria_responsable_id', $categoria);
-                })
-                ->whereIn('id', $ids)
-                ->get();
-        }
-
-        return SEntidadRegistrada::query()
-            ->with(['respuestas.files',])
-            ->where('entidad_id', $entidad_id)
-            ->orderBy('id', 'desc')
-            ->first();
+            ->whereIn('id', $ids)
+            ->when($entidad_id, function ($query, $entidad_id) {
+                $query->where('entidad_id', $entidad_id);
+            })
+            ->get();
     }
 
     /**
-     * @todo falta terminar supervision
+     * @return Collection<int,Seguimiento>
      */
-    public function getSupervision(?int $categoria, ?int $entidad_id): SupervisionEntidadRegistrada | null | Collection
+    public function getSeguimiento(?int $categoria = null, ?int $entidad_id = null): Collection
     {
+        $ids = Seguimiento::query()
+            ->when(request()->get("categoria"), function ($query, $categoria) {
+                $query->whereRelation('entidad', 'categoria_id', $categoria);
+            })
+            ->select(DB::raw('MAX(id) as id'))
+            ->groupBy('entidad_id')
+            ->get()
+            ->pluck('id');
 
-        if ($categoria) {
-            // Obtenemos el último registro por entidad_id
-            $ids = SupervisionEntidadRegistrada::query()
-                ->select(DB::raw('MAX(id) as max_id'))
-                ->groupBy('entidad_id')
-                ->pluck('max_id')
-                ->toArray();
-
-            // Devolvemos las entidades con sus relaciones
-            return SupervisionEntidadRegistrada::with([
-                'entidad',
-                'categoria',
-                'departamento',
-                'secciones',
-                'provincia',
-                'distrito',
-            ])
-                ->when(request()->get('categoria'), function ($query, $categoria) {
-                    $query->where('categoria_responsable_id', $categoria);
-                })
-                ->whereIn('id', $ids)
-                ->get();
+        if ($ids->isEmpty()) {
+            return collect([]);
         }
 
-        return SupervisionEntidadRegistrada::query()
-            ->with('secciones')
-            ->where('entidad_id', $entidad_id)
-            ->orderBy('id', 'desc')
-            ->first();
+        return Seguimiento::with([
+                'entidad.distrito.provincia.departamento',
+                'entidad.categoria',
+                'seguimiento_respuestas',
+            ])
+            ->whereIn('id', $ids)
+            ->when($entidad_id, function ($query, $entidad_id) {
+                $query->where('entidad_id', $entidad_id);
+            })
+            ->get();
     }
 
-    public function resumen(int $entidad)
+    /**
+     * @return Collection<int,Supervision>
+     */
+    public function getSupervision(?int $categoria = null, ?int $entidad_id = null): Collection
     {
-        // Traemos la entidad registrada con todas sus relaciones
-        $monitoreo = $this->getMonitoreo(null, $entidad);
-        $seguimiento = $this->getSeguimiento(null, $entidad);
-        $supervision = $this->getSupervision(null, $entidad);
+        $ids = Supervision::query()
+            ->when(request()->get("categoria"), function ($query, $categoria) {
+                $query->whereRelation('entidad', 'categoria_id', $categoria);
+            })
+            ->select(DB::raw('MAX(id) as id'))
+            ->groupBy('entidad_id')
+            ->get()
+            ->pluck('id');
 
-        $calculo = $this->calculo($monitoreo, $seguimiento, $supervision);
-        $data = [];
-        foreach ($calculo as $key => $value) {
-            $data[$key] = count($value) ? $value[0]["total"] : 0;
+        if ($ids->isEmpty()) {
+            return collect([]);
         }
 
-        return response()->json([
-            "respuestas" => compact(
+        return Supervision::with([
+                'entidad.distrito.provincia.departamento',
+                'entidad.categoria',
+                'supervision_respuestas',
+            ])
+            ->whereIn('id', $ids)
+            ->when($entidad_id, function ($query, $entidad_id) {
+                $query->where('entidad_id', $entidad_id);
+            })
+            ->get();
+    }
+
+    public function resumen(int $entidad): JsonResponse
+    {
+        // Traemos la entidad registrada con todas sus relaciones
+        $monitoreo = $this->getMonitoreo(null, $entidad)->first();
+        $seguimiento = $this->getSeguimiento(null, $entidad)->first();
+        $supervision = $this->getSupervision(null, $entidad)->first();
+
+        $monitoreo = $monitoreo ? $this->calculoMonitoreo($monitoreo) : 0;
+        $seguimiento = $seguimiento ? $this->calculoSeguimiento($seguimiento) : 0;
+        $supervision = $supervision ? $this->calculoSupervision($supervision) : 0;
+
+        return response()->json(
+            compact(
                 'monitoreo',
                 'seguimiento',
                 'supervision',
             ),
-            "calculo" => $data,
-        ]);
+        );
     }
 
-    public function resumenCategoria()
+    public function resumenCategoria(): JsonResponse
     {
-        // Traemos la entidad registrada con todas sus relaciones filtrados por cateogria
-        $monitoreo = $this->getMonitoreo(request()->get("categoria"), null);
-        $monitoreo = $monitoreo->groupBy('entidad_id')->map(function ($entidad) {
-            $entidad = $entidad[0];
-            $entidad->calculo = $this->calculo($entidad, null, null);
-            return $entidad;
-        });
+        $categoria = request()->get('categoria', null);
+        if ($categoria == null) {
+            abort(400, 'Debe especificar la categoría');
+        }
+        // Traemos la entidad registrada con todas sus relaciones
+        $monitoreo = $this->getMonitoreo($categoria);
+        $seguimiento = $this->getSeguimiento($categoria);
+        $supervision = $this->getSupervision($categoria);
 
-        $seguimiento = $this->getSeguimiento(request()->get("categoria"), null);
-        $seguimiento = $seguimiento->groupBy('entidad_id')->map(function ($entidad) {
-            $entidad = $entidad[0];
-            $entidad->calculo = $this->calculo(null, $entidad, null);
-            return $entidad;
-        });
-        $supervision = $this->getSupervision(request()->get("categoria"), null);
-        $supervision = $supervision->groupBy('entidad_id')->map(function ($entidad) {
-            $entidad = $entidad[0];
-            $entidad->calculo = $this->calculo(null, null, $entidad);
-            return $entidad;
-        });
+        $grouped = $monitoreo
+            ->merge($seguimiento)
+            ->merge($supervision)
+            ->values()
+            ->groupBy('entidad_id')
+            ->map(function (Collection $item) {
+                /** @var Collection<int,Monitoreo|Supervision|Seguimiento> $item */
+                $monitoreo = $item->where(fn($i) => $i instanceof Monitoreo)->first();
+                $seguimiento = $item->where(fn($i) => $i instanceof Seguimiento)->first();
+                $supervision = $item->where(fn($i) => $i instanceof Supervision)->first();
 
-        $merged = collect([$monitoreo, $seguimiento, $supervision])->collapse();
-        $grouped = $merged->groupBy(function ($item, $key) {
-            return $item->entidad_id; // o el campo identificador de tu modelo
-        });
-        $data = collect();
-        foreach ($grouped as $entidad_id => $collection) {
-            $entidad = $collection->first();
-            $collection = $collection
-                ->pad(3, null)
-                ->map(function (MEntidadRegistrada|SEntidadRegistrada|SupervisionEntidadRegistrada|null $entidad) {
-                    if (!$entidad) {
-                        return [];
-                    }
-                    if ($entidad instanceof MEntidadRegistrada) {
-                        return ["monitoreo" => $this->calculoMonitoreo($entidad)];
-                    };
-                    if ($entidad instanceof SEntidadRegistrada) {
-                        return ["seguimiento" => $this->calculoSeguimiento($entidad)];
-                    };
-                    return ["supervision" => $this->calculoSupervision($entidad)];
-                })
-                ->collapse();
-
-            $data->push([
-                "entidad" => $entidad->entidad,
-                "departamento" => $entidad->departamento,
-                "provincia" => $entidad->provincia,
-                "distrito" => $entidad->distrito,
-                "respuestas" => [
+                $entidad = $item->first()->entidad;
+                $entidad->respuestas = [
                     [
                         "nombre" => "Monitoreo",
-                        "calculo" => $collection->get("monitoreo", 0),
+                        "calculo" => $monitoreo ? $this->calculoMonitoreo($monitoreo) : 0,
                     ],
                     [
                         "nombre" => "Seguimiento",
-                        "calculo" => $collection->get("seguimiento", 0),
+                        "calculo" => $seguimiento ? $this->calculoSeguimiento($seguimiento) : 0,
                     ],
                     [
                         "nombre" => "Supervision",
-                        "calculo" => $collection->get("supervision", 0)
-                    ]
-                ]
-            ]);
-        }
-        return $data;
+                        "calculo" => $supervision ? $this->calculoSupervision($supervision) : 0,
+                    ],
+                ];
+                return $entidad;
+            });
+        ;
 
-
-
-        return response()->json([
-            "respuestas" => compact(
-                'monitoreo',
-                'seguimiento',
-                'supervision',
-            ),
-            "calculo" => $this->calculo($monitoreo, $seguimiento, $supervision),
-        ]);
+        return response()->json($grouped->values());
     }
 }

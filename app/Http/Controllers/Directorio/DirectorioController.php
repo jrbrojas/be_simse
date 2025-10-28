@@ -2,21 +2,15 @@
 
 namespace App\Http\Controllers\Directorio;
 
-use App\Exports\Directorio\ResponsablesDeEntidades;
+use App\Exports\Directorio\DirectorioPorEntidadesExport;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Traits\DataUbicacion;
-use App\Models\Directorio\EntidadRegistrada;
+use App\Models\Directorio\Directorio;
+use App\Models\Directorio\HistorialResponsable;
 use App\Models\Directorio\Responsable;
-use App\Models\Entidad;
-use App\Models\Prov;
-use App\Models\Ubigeo;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class DirectorioController extends Controller
 {
-    use DataUbicacion;
-
     public function exportarExcel()
     {
         $entidades = request()->query('entidad', []);
@@ -24,96 +18,108 @@ class DirectorioController extends Controller
             is_array($entidades) &&
             count($entidades) > 0
         ) {
-            return (new ResponsablesDeEntidades($entidades))->download('responsables.xlsx');
+            return (new DirectorioPorEntidadesExport($entidades))->download('responsables.xlsx');
         }
         abort(404);
     }
 
-    public function getEntidad(int $entidad)
-    {
-        $e = EntidadRegistrada::query()
-            ->with([
-                'entidad.distrito',
-                'entidad.provincia',
-                'entidad.departamento',
-                'categoria',
-            ])->where('entidad_id', $entidad)->firstOrFail();
-        return $e;
-    }
-
-    public function entidades()
-    {
-        return EntidadRegistrada::with(['entidad.distrito', 'categoria'])->get();
-    }
-
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $latestIds = DB::table('responsables as r')
-            ->select(DB::raw('MAX(id) as id'))
-            ->join(
-                DB::raw('(SELECT id_entidad, MAX(fecha_fin) AS max_fecha FROM responsables GROUP BY id_entidad) m'),
-                function ($join) {
-                    $join->on('r.id_entidad', '=', 'm.id_entidad')
-                         ->on('r.fecha_fin', '=', 'm.max_fecha');
-                }
-            )
-            ->groupBy('r.id_entidad')
-            ->pluck('id');
-        $responsables = Responsable::query()
+        return Directorio::query()
             ->with([
-                // historial
-                'entidad.responsables' => function ($query) use ($latestIds) {
-                    $query->whereNotIn('responsables.id', $latestIds);
-                },
+                'responsable.cargo',
+                'responsable.roles_responsable',
+                'entidad.distrito.provincia.departamento',
+                'entidad.categoria',
+                'historial_responsables.responsable',
             ])
-            ->select(
-                'responsables.*',
-                'entidades.ubigeo',
-                'entidades.nombre as nombre_entidad',
-                'departamentos.nombre as departamento',
-                'provincias.nombre as provincia',
-                'distritos.nombre as distrito',
-                'categorias_responsables.nombre as categoria',
-                'cargos_responsables.nombre as cargo',
-                'roles_responsables.nombre as rol',
-            )
-            ->leftJoin('categorias_responsables', 'responsables.id_categoria', '=', 'categorias_responsables.id')
-            ->leftJoin('distritos', 'responsables.id_distrito', '=', 'distritos.id')
-            ->leftJoin('entidades', 'responsables.id_entidad', '=', 'entidades.id')
-            ->leftJoin('departamentos', 'responsables.id_departamento', '=', 'departamentos.id')
-            ->leftJoin('provincias', 'responsables.id_provincia', '=', 'provincias.id')
-            ->leftJoin('cargos_responsables', 'cargos_responsables.id', '=', 'responsables.id_cargo')
-            ->leftJoin('roles_responsables', 'roles_responsables.id', '=', 'responsables.id_rol')
-            ->when(request('entidad'), function ($query, $entidad) {
-                $query->where('responsables.id_entidad', $entidad);
-            })
-            ->when(request('distrito'), function ($query, $distrito) {
-                $query->where('responsables.id_distrito', $distrito);
-            })
-            ->when(request('categoria'), function ($query, $categoria) {
-                $query->where('responsables.id_categoria', $categoria);
-            })
-            ->when(request('q'), function ($query, $search) {
-                $search = strtolower($search);
+            ->when(request()->get("q"), function ($query, $search) {
                 $query->where(
-                    fn($query) => $query
-                        ->whereRaw('LOWER(entidades.nombre) LIKE ?', ["%{$search}%"])
-                        ->orWhere('responsables.dni', 'like', "%{$search}%")
-                        ->orWhereRaw('LOWER(responsables.nombre) LIKE ?', ["%{$search}%"])
-                        ->orWhereRaw('LOWER(responsables.apellido) LIKE ?', ["%{$search}%"])
-                        // concat nombre y apellido
-                        ->orWhereRaw(
-                            "LOWER(CONCAT(responsables.nombre, ' ', responsables.apellido)) LIKE ?",
-                            ["%{$search}%"],
-                        )
+                    fn($q) => $q
+                        ->whereHas('entidad', function ($qe) use ($search) {
+                            $qe->whereRaw('LOWER(nombre) LIKE ?', ["%{$search}%"]);
+                        })
+                        ->orWhereHas('responsable', function ($qr) use ($search) {
+                            $qr->where('dni', 'like', "%{$search}%")
+                                ->orWhereRaw(
+                                    "LOWER(CONCAT(responsables.nombre, ' ', responsables.apellido)) LIKE ?",
+                                    ["%{$search}%"],
+                                );
+                        })
                 );
             })
-            ->whereIn('responsables.id', $latestIds)
+            ->when(request()->get("entidad"), function ($query, $entidad) {
+                $query->where('entidad_id', $entidad);
+            })
+            ->when(request()->get("distrito"), function ($query, $distrito) {
+                $query->whereRelation('entidad', 'distrito_id', $distrito);
+            })
             ->get();
-        return $responsables->map(function ($responsable) {
-            $responsable->historial = $responsable->entidad->responsables;
-            unset($responsable->entidad->responsables);
-            return $responsable;
-        });
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $responsable = Responsable::query()->create([
+            'nombre' => request()->get('nombre'),
+            'apellido' => request()->get('apellido'),
+            'dni' => request()->get('dni'),
+            'email' => request()->get('email'),
+            'telefono' => request()->get('telefono'),
+            'fecha_inicio' => request()->get('fecha_inicio'),
+            'fecha_fin' => request()->get('fecha_fin'),
+            'cargo_id' => request()->get('id_cargo'),
+            'roles_responsables_id' => request()->get('id_rol'),
+        ]);
+
+        $directorio = Directorio::query()->firstOrNew([
+            "entidad_id" => $request->get("id_entidad"),
+        ]);
+
+        $directorio->responsable_id = $responsable->id;
+        $directorio->fecha_registro = $request->get('fecha_registro');
+        $directorio->save();
+
+        //$responsable = Responsable::query()->find($request->get("responsable_id"));
+
+        HistorialResponsable::query()->create([
+            "responsable_id" => $responsable->id,
+            "directorio_id" => $directorio->id,
+            "fecha_inicio" => $responsable->fecha_inicio,
+            "fecha_fin" => $responsable->fecha_fin,
+        ]);
+
+        return [
+            "message" => "Directorio creado",
+        ];
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Directorio $directorio)
+    {
+        return $directorio->load([
+            "responsable",
+            "entidad.distrito.provincia.departamento",
+            "historial_responsables.responsable",
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Directorio $directorio)
+    {
+        $directorio->update([
+            "responsable_id" => $request->get("responsable_id"),
+        ]);
+
+        return $directorio;
     }
 }
