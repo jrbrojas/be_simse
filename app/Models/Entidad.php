@@ -3,11 +3,15 @@
 namespace App\Models;
 
 use App\Models\Directorio\Categoria;
+use App\Models\Monitoreo\Monitoreo;
+use App\Models\Seguimiento\Seguimiento;
+use App\Models\Supervision\Supervision;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Entidad extends Model
 {
+    protected $table = 'entidades';
     /**
      * The attributes that are mass assignable.
      *
@@ -57,5 +61,20 @@ class Entidad extends Model
     public function categoria()
     {
         return $this->belongsTo(Categoria::class);
+    }
+
+    public function monitoreos()
+    {
+        return $this->hasMany(Monitoreo::class);
+    }
+
+    public function seguimientos()
+    {
+        return $this->hasMany(Seguimiento::class);
+    }
+
+    public function supervisions()
+    {
+        return $this->hasMany(Supervision::class);
     }
 }

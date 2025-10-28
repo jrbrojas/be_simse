@@ -25,6 +25,7 @@ class Responsable extends Model
 
     public function roles_responsable()
     {
-        return $this->belongsTo(RolesResponsable::class);
+        // @todo no usar roles_responsables sino roles_responsable_id
+        return $this->belongsTo(RolesResponsable::class, 'roles_responsables_id');
     }
 }

@@ -5,13 +5,39 @@ namespace App\Http\Controllers\Supervision;
 use App\Http\Controllers\Controller;
 use App\Models\Supervision\Supervision;
 use App\Models\Supervision\SupervisionEntidadRegistrada;
+use App\Models\Supervision\SupervisionRespuesta;
 use App\Models\Supervision\SupervisionSeccion;
 use App\Models\Supervision\SupervisionItem;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
 class SupervisionController extends Controller
 {
+    public function tabla()
+    {
+        $ids = Supervision::query()
+            ->when(request()->get("categoria"), function ($query, $categoria) {
+                $query->whereRelation('entidad', 'categoria_id', $categoria);
+            })
+            ->select(DB::raw('MAX(id) as id'))
+            ->groupBy('entidad_id')
+            ->get()
+            ->pluck('id');
+
+        if ($ids->isEmpty()) {
+            return [];
+        }
+
+        return Supervision::with([
+                'entidad.distrito.provincia.departamento',
+                'entidad.categoria',
+                'supervision_respuestas',
+            ])
+            ->whereIn('id', $ids)
+            ->get();
+    }
+
     public function index()
     {
         return Supervision::with('entidad.distrito.provincia.departamento')
@@ -23,99 +49,55 @@ class SupervisionController extends Controller
 
     public function store(Request $request)
     {
-        // 1) Cabecera
-        $entidad = SupervisionEntidadRegistrada::create([
+        $supervision = Supervision::query()->create([
             'entidad_id'              => $request->input('entidad_id'),
-            'categoria_responsable_id'=> $request->input('categoria_responsable_id'),
-            'ubigeo'                  => $request->input('ubigeo'),
-            'provincia_idprov'        => $request->input('provincia_idprov'),
-            'departamento_iddpto'     => $request->input('departamento_iddpto'),
+            'promedio_final'          => $request->input('promedio_final'),
             'anio'                    => $request->input('anio'),
         ]);
 
-        // Variables para calcular promedio final
-        $sumaPromediosSecciones = 0;
-        $cantidadSecciones      = 0;
+        $respuestas = $request->all()['respuestas'] ?? [];
 
-        // 2) Secciones + items + archivos
-        $all = $request->all();
-        $secciones = $all['secciones'] ?? [];
-
-        foreach ($secciones as $secData) {
-            // Guardar la sección (promedio inicial = 0, se recalcula después)
-            $seccion = SupervisionSeccion::create([
-                'supervision_entidad_registrada_id' => $entidad->id,
-                'nombre'   => $secData['nombre']   ?? 'Sin nombre',
-                'respuesta' => $secData['respuesta'] ?? 'no',
-                'promedio' => 0,
+        foreach ($respuestas as $respuesta) {
+            $supervisionRespuesta = SupervisionRespuesta::query()->create([
+                'supervision_id' => $supervision->id,
+                'nombre'   => $respuesta['nombre']   ?? 'Sin nombre',
+                'respuesta' => strtolower($respuesta['respuesta'] ?? 'no'),
+                'promedio' => $respuesta['promedio'] ?? 0,
             ]);
 
-             // Si la sección está marcada como "no", salta ítems y promedio queda en 0
-            if ($seccion->respuesta === 'no') {
-                continue;
-            }
+            $uploaded = $respuesta['file'] ?? [];
+            $files = collect([]);
+            if (is_array($uploaded) && !empty($uploaded)) {
+                foreach ($uploaded as $item) {
+                    /** @var UploadedFile $file */
+                    $file = $item['file'];
+                    $path     = $file->store('supervision/files');
 
-            $items = $secData['item'] ?? [];
-            $sumaPorcentajes = 0;
-            $cantidadItems   = 0;
-
-            foreach ($items as $itemData) {
-                $item = SupervisionItem::create([
-                    'supervision_seccion_id' => $seccion->id,
-                    'nombre'      => $itemData['nombre'] ?? 'Sin nombre',
-                    'porcentaje'  => $itemData['porcentaje'] ?? 0,
-                ]);
-
-                $sumaPorcentajes += (int) ($itemData['porcentaje'] ?? 0);
-                $cantidadItems++;
-
-                if (!empty($itemData['file'])) {
-                    $files = [$itemData['file']];
-                    foreach ($files as $uploaded) {
-                        $path     = $uploaded->store('supervision/files');
-
-                        $item->files()->create([
-                            'name'        => $uploaded->getClientOriginalName(),
-                            'path'        => $path,
-                            'disk'        => 'local',
-                            'size'        => $uploaded->getSize(),
-                            'mime_type'   => $uploaded->getClientMimeType(),
-                            'descripcion' => $itemData['descripcion'] ?? null,
-                            'porcentaje'    => ($itemData['porcentaje'] ?? 'no') === 'si' ? 'si' : 'no',
-                            'promedio' => $itemData['promedio'] ?? 0,
-                        ]);
-                    }
+                    $files->push([
+                        'name'        => $file->getClientOriginalName(),
+                        'path'        => $path,
+                        'disk'        => 'local',
+                        'size'        => $file->getSize(),
+                        'mime_type'   => $file->getClientMimeType(),
+                        'descripcion' => $item['descripcion'] ?? null,
+                        'aprobado'    => null,
+                        'porcentaje' => $item['porcentaje'] ?? 0,
+                    ]);
                 }
             }
-
-            // 3) Calcular promedio de la sección
-            $promedioSeccion = 0;
-            if ($cantidadItems > 0) {
-                $promedioSeccion = round($sumaPorcentajes / $cantidadItems, 2);
-                $seccion->update(['promedio' => $promedioSeccion]);
-            }
-
-            // acumular para promedio final
-            $sumaPromediosSecciones += $promedioSeccion;
-            $cantidadSecciones++;
+            $supervisionRespuesta->files()->createMany($files->toArray());
         }
 
-        // 4) Calcular Promedio Final de la entidad
-        $promedioFinal = 0;
-        if ($cantidadSecciones > 0) {
-            $promedioFinal = round($sumaPromediosSecciones / $cantidadSecciones, 2);
-        }
-        $entidad->update(['promedio_final' => $promedioFinal]);
-
-        return response()->json(
-            $entidad->load('secciones.items.files'),
-            201
-        );
+        return $supervision->load([
+            'entidad.distrito.provincia.departamento',
+            'supervision_respuestas.files',
+        ]);
     }
 
     public function show(Supervision $supervision)
     {
         return $supervision->load([
+            'entidad.categoria',
             'entidad.distrito.provincia.departamento',
             'supervision_respuestas.files'
         ]);

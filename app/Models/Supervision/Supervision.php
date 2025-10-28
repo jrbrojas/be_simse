@@ -25,7 +25,7 @@ class Supervision extends Model
     /**
      * Relaciones con Supervisión
      */
-    public function supervision_respuesta()
+    public function supervision_respuestas()
     {
         return $this->hasMany(SupervisionRespuesta::class);
     }

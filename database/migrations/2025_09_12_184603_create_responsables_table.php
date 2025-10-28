@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('dni');
             $table->string('email');
             $table->string('telefono');
+            $table->date('fecha_inicio');
+            $table->date('fecha_fin');
 
             $table->timestamps();
         });

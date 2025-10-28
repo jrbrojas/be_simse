@@ -1,40 +1,39 @@
 <?php
 
-namespace App\Http\Controllers\Monitoreo;
+namespace App\Http\Controllers\Supervision;
 
 use App\Http\Controllers\Controller;
-use App\Models\Monitoreo\Monitoreo;
-use App\Models\Monitoreo\MonitoreoRespuesta;
+use App\Models\Supervision\Supervision;
+use App\Models\Supervision\SupervisionRespuesta;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class RespuestaController extends Controller
 {
     public function index()
     {
-        return MonitoreoRespuesta::with('files')
+        return SupervisionRespuesta::with('files')
             ->when(request()->get("entidad_id"), function ($query, $id) {
                 $query->where('entidad_id', $id);
             })
             ->get();
     }
 
-    public function exportPdf(Monitoreo $monitoreo)
+    public function exportPdf(Supervision $supervision)
     {
-        $data = $monitoreo->load([
-            'monitoreo_respuestas.files',
+        $data = $supervision->load([
+            'supervision_respuestas.files',
             'entidad.distrito.provincia.departamento',
             'entidad.categoria',
         ]);
 
-        // agrupamos las respuestas por OP
-        $respuestasAgrupadas = $data->monitoreo_respuestas->groupBy('op');
+        $respuestasAgrupadas = $data->supervision_respuestas->groupBy('nombre');
 
-        $pdf = Pdf::loadView('pdf.monitoreo_reporte', [
+        $pdf = Pdf::loadView('pdf.supervision_reporte', [
             'data' => $data,
             'respuestasAgrupadas' => $respuestasAgrupadas
         ])
         ->setPaper('a4', 'portrait');
 
-        return $pdf->stream("reporte_entidad_{$monitoreo->entidad->id}.pdf");
+        return $pdf->stream("reporte_entidad_{$supervision->entidad_id}.pdf");
     }
 }

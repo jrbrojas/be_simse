@@ -23,4 +23,9 @@ class HistorialResponsable extends Model
     {
         return $this->belongsTo(Directorio::class);
     }
+
+    public function responsable()
+    {
+        return $this->belongsTo(Responsable::class);
+    }
 }

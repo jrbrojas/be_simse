@@ -69,25 +69,25 @@
         <tr>
             <td style="width:25%;">
                 <div class="label">DEPARTAMENTO</div>
-                <div class="value">{{ $data->departamento->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->distrito->provincia->departamento->nombre ?? '-' }}</div>
             </td>
             <td style="width:25%;">
                 <div class="label">PROVINCIA</div>
-                <div class="value">{{ $data->provincia->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->distrito->provincia->nombre ?? '-' }}</div>
             </td>
             <td style="width:25%;">
                 <div class="label">DISTRITO</div>
-                <div class="value">{{ $data->distrito->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->distrito->nombre ?? '-' }}</div>
             </td>
             <td style="width:25%;">
                 <div class="label">UBIGEO</div>
-                <div class="value">{{ $data->distrito->ubigeo ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->distrito->codigo ?? '-' }}</div>
             </td>
         </tr>
         <tr>
             <td colspan="2">
                 <div class="label">CATEGORÍA</div>
-                <div class="value">{{ $data->categoria->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->categoria->nombre ?? '-' }}</div>
             </td>
             <td colspan="2" style="text-align:right;">
                 <div class="label">FECHA DE ACTUALIZACIÓN DE INDICADORES</div>
@@ -102,7 +102,7 @@
 {{-- Indicadores agrupados --}}
 <h4 style="margin-top:20px;">INDICADORES</h4>
 
-@foreach($respuestasAgrupadas as $op => $grupo)
+@foreach($respuestasAgrupadas as $op => $resp)
     <div class="op-header">
         {{ strtoupper($op) }}
     </div>
@@ -116,13 +116,12 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($grupo->first()->items as $resp)
                 <tr>
-                    <td>{{ $resp->nombre ?? '-' }}</td>
-                    <td>{{ $resp->porcentaje ?? '-' }}</td>
+                    <td>{{ $resp[0]->nombre ?? '-' }}</td>
+                    <td>{{ $resp[0]->promedio ?? '-' }}</td>
                     <td>
-                        @if($resp->files && $resp->files->count())
-                            @foreach($resp->files as $file)
+                        @if($resp[0]->files && $resp[0]->files->count())
+                            @foreach($resp[0]->files as $file)
                             <div>
                                     {{-- Mostrar descripción si existe, sino el nombre --}}
                                     <a href="{{ $file->url }}" target="_blank">
@@ -137,11 +136,6 @@
                         @endif
                     </td>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="3" style="text-align:center;">No hay registros</td>
-                </tr>
-            @endforelse
         </tbody>
     </table>
 @endforeach

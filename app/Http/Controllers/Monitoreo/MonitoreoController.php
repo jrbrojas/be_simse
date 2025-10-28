@@ -7,6 +7,7 @@ use App\Http\Requests\Monitoreo\RespuestaStore;
 use App\Models\Monitoreo\Monitoreo;
 use App\Models\Monitoreo\MonitoreoRespuesta;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class MonitoreoController extends Controller
@@ -23,7 +24,7 @@ class MonitoreoController extends Controller
         return $url;
     }
 
-    public function guardarArchivoER(MonitoreoRespuesta $er, ?UploadedFile $file): string
+    public function guardarArchivoER(Monitoreo $er, ?UploadedFile $file): string
     {
         if (null === $file) {
             return "";
@@ -106,18 +107,46 @@ class MonitoreoController extends Controller
 
     public function index()
     {
-        return Monitoreo::with('entidad.distrito.provincia.departamento')
-            ->when(request()->get("categoria"), function ($query, $categoria) {
-                $query->where('categoria_id', $categoria);
-            })
+        return Monitoreo::with([
+                'file',
+                'entidad.categoria',
+                'entidad.distrito.provincia.departamento'
+            ])
             ->get();
     }
 
     public function show(Monitoreo $monitoreo)
     {
-        return $monitoreo::load([
+        return $monitoreo->load([
+            'file',
+            'entidad.categoria',
             'entidad.distrito.provincia.departamento',
             'monitoreo_respuestas.files',
         ]);
+    }
+
+    public function tabla()
+    {
+        $ids = Monitoreo::query()
+            ->when(request()->get("categoria"), function ($query, $categoria) {
+                $query->whereRelation('entidad', 'categoria_id', $categoria);
+            })
+            ->select(DB::raw('MAX(id) as id'))
+            ->groupBy('entidad_id')
+            ->get()
+            ->pluck('id');
+
+        if ($ids->isEmpty()) {
+            return [];
+        }
+
+        return Monitoreo::with([
+                'file',
+                'entidad.categoria',
+                'entidad.distrito.provincia.departamento',
+                'monitoreo_respuestas'
+            ])
+            ->whereIn('id', $ids)
+            ->get();
     }
 }

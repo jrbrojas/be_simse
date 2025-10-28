@@ -22,4 +22,9 @@ class Directorio extends Model
     {
         return $this->belongsTo(Responsable::class);
     }
+
+    public function historial_responsables()
+    {
+        return $this->hasMany(HistorialResponsable::class);
+    }
 }

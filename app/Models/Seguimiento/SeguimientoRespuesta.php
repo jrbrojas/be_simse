@@ -2,6 +2,7 @@
 
 namespace App\Models\Seguimiento;
 
+use App\Models\File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -20,11 +21,10 @@ class SeguimientoRespuesta extends Model
 
     /**
      * Relación con archivos adjuntos
-     * @return MorphMany<SeguimientoFile>
+     * @return MorphMany<File>
      */
     public function files()
     {
-        return $this->morphMany(SeguimientoFile::class, 'fileable');
+        return $this->morphMany(File::class, 'fileable');
     }
 }
-

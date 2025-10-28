@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Seguimiento\RespuestaStore;
 use App\Models\Seguimiento\Seguimiento;
 use App\Models\Seguimiento\SeguimientoRespuesta;
+use Illuminate\Support\Facades\DB;
 
 class SeguimientoController extends Controller
 {
@@ -18,17 +19,41 @@ class SeguimientoController extends Controller
             ->get();
     }
 
+    public function tabla()
+    {
+        $ids = Seguimiento::query()
+            ->when(request()->get("categoria"), function ($query, $categoria) {
+                $query->whereRelation('entidad', 'categoria_id', $categoria);
+            })
+            ->select(DB::raw('MAX(id) as id'))
+            ->groupBy('entidad_id')
+            ->get()
+            ->pluck('id');
+
+        if ($ids->isEmpty()) {
+            return [];
+        }
+
+        return Seguimiento::with([
+                'entidad.distrito.provincia.departamento',
+                'entidad.categoria',
+                'seguimiento_respuestas',
+            ])
+            ->whereIn('id', $ids)
+            ->get();
+    }
+
     public function show(Seguimiento $seguimiento)
     {
-        return $seguimiento::load([
+        return $seguimiento->load([
+            'entidad.categoria',
             'entidad.distrito.provincia.departamento',
-            'monitoreo_respuestas.files',
+            'seguimiento_respuestas.files',
         ]);
     }
 
     public function store(RespuestaStore $request)
     {
-
         $er = Seguimiento::query()->create([
             'entidad_id' => $request->entidad_id,
             'anio' => $request->anio,

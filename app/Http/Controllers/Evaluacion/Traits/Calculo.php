@@ -3,9 +3,14 @@
 namespace App\Http\Controllers\Evaluacion\Traits;
 
 use App\Models\Monitoreo\EntidadRegistrada as MEntidadRegistrada;
+use App\Models\Monitoreo\Monitoreo;
+use App\Models\Monitoreo\MonitoreoRespuesta;
 use App\Models\Monitoreo\RespuestasPreguntas as MRespuestasPreguntas;
 use App\Models\Seguimiento\EntidadRegistrada as SEntidadRegistrada;
 use App\Models\Seguimiento\RespuestasPreguntas as SRespuestasPreguntas;
+use App\Models\Seguimiento\Seguimiento;
+use App\Models\Seguimiento\SeguimientoRespuesta;
+use App\Models\Supervision\Supervision;
 use App\Models\Supervision\SupervisionEntidadRegistrada;
 use Closure;
 use Illuminate\Support\Collection;
@@ -13,15 +18,12 @@ use Illuminate\Support\Collection;
 trait Calculo
 {
     protected function calculoMonitoreo(
-        ?MEntidadRegistrada $monitoreo = null
+        Monitoreo $monitoreo
     ): float {
-        if (!$monitoreo) {
-            return 0;
-        }
-        $total = $monitoreo->respuestas->count();
-        $si = $monitoreo->respuestas
+        $total = $monitoreo->monitoreo_respuestas->count();
+        $si = $monitoreo->monitoreo_respuestas
             ->filter(
-                fn(MRespuestasPreguntas $r) => strtolower($r->respuesta) === 'si'
+                fn(MonitoreoRespuesta $r) => strtolower($r->respuesta) === 'si'
             )
             ->count();
         $division = ($si / $total) * 100;
@@ -29,31 +31,21 @@ trait Calculo
     }
 
     protected function calculoSeguimiento(
-        ?SEntidadRegistrada $seguimiento = null
+        Seguimiento $seguimiento,
     ): float {
-        if (!$seguimiento) {
-            return 0;
-        }
-        $total = $seguimiento->respuestas->count();
-        $si = $seguimiento->respuestas
+        $total = $seguimiento->seguimiento_respuestas->count();
+        $si = $seguimiento->seguimiento_respuestas
             ->filter(
-                fn(SRespuestasPreguntas $r) => strtolower($r->respuesta) === 'si'
+                fn(SeguimientoRespuesta $r) => strtolower($r->respuesta) === 'si'
             )
             ->count();
         $division = ($si / $total) * 100;
         return floor($division * 100) / 100;
     }
 
-    /**
-     * @todo falta terminar supervision
-     */
     protected function calculoSupervision(
-        ?SupervisionEntidadRegistrada $supervision = null
+        Supervision $supervision
     ): float {
-        if (!$supervision) {
-            return 0;
-        }
-
         return (float) $supervision->promedio_final;
     }
 

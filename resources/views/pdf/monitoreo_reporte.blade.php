@@ -69,25 +69,25 @@
         <tr>
             <td style="width:25%;">
                 <div class="label">DEPARTAMENTO</div>
-                <div class="value">{{ $data->departamento->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->distrito->provincia->departamento->nombre ?? '-' }}</div>
             </td>
             <td style="width:25%;">
                 <div class="label">PROVINCIA</div>
-                <div class="value">{{ $data->provincia->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->distrito->provincia->nombre ?? '-' }}</div>
             </td>
             <td style="width:25%;">
                 <div class="label">DISTRITO</div>
-                <div class="value">{{ $data->distrito->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->distrito->nombre ?? '-' }}</div>
             </td>
             <td style="width:25%;">
                 <div class="label">UBIGEO</div>
-                <div class="value">{{ $data->distrito->ubigeo ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->distrito->codigo ?? '-' }}</div>
             </td>
         </tr>
         <tr>
             <td colspan="2">
                 <div class="label">CATEGORÍA</div>
-                <div class="value">{{ $data->categoria->nombre ?? '-' }}</div>
+                <div class="value">{{ $data->entidad->categoria->nombre ?? '-' }}</div>
             </td>
             <td colspan="2" style="text-align:right;">
                 <div class="label">FECHA DE ACTUALIZACIÓN DE INDICADORES</div>
