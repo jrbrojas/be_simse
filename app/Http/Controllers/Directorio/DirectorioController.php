@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Directorio;
 
+use App\Exports\Directorio\DirectorioPorEntidadesExport;
 use App\Http\Controllers\Controller;
 use App\Models\Directorio\Directorio;
 use App\Models\Directorio\HistorialResponsable;
@@ -10,6 +11,18 @@ use Illuminate\Http\Request;
 
 class DirectorioController extends Controller
 {
+    public function exportarExcel()
+    {
+        $entidades = request()->query('entidad', []);
+        if (
+            is_array($entidades) &&
+            count($entidades) > 0
+        ) {
+            return (new DirectorioPorEntidadesExport($entidades))->download('responsables.xlsx');
+        }
+        abort(404);
+    }
+
     /**
      * Display a listing of the resource.
      */

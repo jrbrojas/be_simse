@@ -17,6 +17,10 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::get('/provincias', [\App\Http\Controllers\ProvinciaController::class, 'index']);
 
     Route::get('/directorio', [\App\Http\Controllers\Directorio\DirectorioController::class, 'index']);
+    Route::get(
+        '/directorio/exportar-excel',
+        [\App\Http\Controllers\Directorio\DirectorioController::class, 'exportarExcel'],
+    )->name("directorio.exportar-excel");
 
     // para las tablas
     Route::get('/monitoreo/tabla', [\App\Http\Controllers\Monitoreo\MonitoreoController::class, 'tabla']);
