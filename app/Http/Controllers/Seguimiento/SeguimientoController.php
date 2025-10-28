@@ -69,17 +69,19 @@ class SeguimientoController extends Controller
             if (!empty($respuestaData['files'])) {
                 foreach ($respuestaData['files'] as $uploadedFile) {
                     $file = $uploadedFile['file'];
-                    $path = $file->store('seguimiento/respuestas');
+                    if ($file) {
+                        $path = $file->store('seguimiento/respuestas');
 
-                    $respuesta->files()->create([
-                        'name' => $file->getClientOriginalName(),
-                        'path' => $path,
-                        'disk' => 'local',
-                        'size' => $file->getSize(),
-                        'mime_type' => $file->getClientMimeType(),
-                        'descripcion' => $uploadedFile['descripcion'] ?? null,
-                        'aprobado' => ($uploadedFile['aprobado'] ?? 'no') === 'si' ? 'si' : 'no',
-                    ]);
+                        $respuesta->files()->create([
+                            'name' => $file->getClientOriginalName(),
+                            'path' => $path,
+                            'disk' => 'local',
+                            'size' => $file->getSize(),
+                            'mime_type' => $file->getClientMimeType(),
+                            'descripcion' => $uploadedFile['descripcion'] ?? null,
+                            'aprobado' => ($uploadedFile['aprobado'] ?? 'no') === 'si' ? 'si' : 'no',
+                        ]);
+                    }
                 }
             }
         }

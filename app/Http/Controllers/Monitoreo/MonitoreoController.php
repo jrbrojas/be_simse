@@ -84,19 +84,21 @@ class MonitoreoController extends Controller
                 $data = [];
                 foreach ($respuesta["files"] as $item) {
                     $file = $item["file"];
-                    $descripcion = $item["descripcion"];
+                    if ($file) {
+                        $descripcion = $item["descripcion"];
 
-                    $data[] = [
-                        'name' => $file->getClientOriginalName(),
-                        'path' => $this->guardarArchivo($file),
-                        'disk' => 'local',
-                        'size' => $file->getSize(),
-                        'mime_type' => $file->getClientMimeType(),
-                        'description' => $descripcion,
-                        'extra' => json_encode([]),
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
+                        $data[] = [
+                            'name' => $file->getClientOriginalName(),
+                            'path' => $this->guardarArchivo($file),
+                            'disk' => 'local',
+                            'size' => $file->getSize(),
+                            'mime_type' => $file->getClientMimeType(),
+                            'description' => $descripcion,
+                            'extra' => json_encode([]),
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }
                 }
                 $r->files()->createMany($data);
             }

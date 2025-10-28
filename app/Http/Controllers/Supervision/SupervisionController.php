@@ -71,18 +71,20 @@ class SupervisionController extends Controller
                 foreach ($uploaded as $item) {
                     /** @var UploadedFile $file */
                     $file = $item['file'];
-                    $path     = $file->store('supervision/files');
+                    if ($file) {
+                        $path     = $file->store('supervision/files');
 
-                    $files->push([
-                        'name'        => $file->getClientOriginalName(),
-                        'path'        => $path,
-                        'disk'        => 'local',
-                        'size'        => $file->getSize(),
-                        'mime_type'   => $file->getClientMimeType(),
-                        'descripcion' => $item['descripcion'] ?? null,
-                        'aprobado'    => null,
-                        'porcentaje' => $item['porcentaje'] ?? 0,
-                    ]);
+                        $files->push([
+                            'name'        => $file->getClientOriginalName(),
+                            'path'        => $path,
+                            'disk'        => 'local',
+                            'size'        => $file->getSize(),
+                            'mime_type'   => $file->getClientMimeType(),
+                            'descripcion' => $item['descripcion'] ?? null,
+                            'aprobado'    => null,
+                            'porcentaje' => $item['porcentaje'] ?? 0,
+                        ]);
+                    }
                 }
             }
             $supervisionRespuesta->files()->createMany($files->toArray());

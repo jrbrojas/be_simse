@@ -30,7 +30,7 @@ class ResumenController extends Controller
             ->pluck('id');
 
         if ($ids->isEmpty()) {
-            return [];
+            return collect([]);
         }
 
         return Monitoreo::with([
@@ -61,7 +61,7 @@ class ResumenController extends Controller
             ->pluck('id');
 
         if ($ids->isEmpty()) {
-            return [];
+            return collect([]);
         }
 
         return Seguimiento::with([
@@ -91,7 +91,7 @@ class ResumenController extends Controller
             ->pluck('id');
 
         if ($ids->isEmpty()) {
-            return [];
+            return collect([]);
         }
 
         return Supervision::with([
@@ -109,13 +109,13 @@ class ResumenController extends Controller
     public function resumen(int $entidad): JsonResponse
     {
         // Traemos la entidad registrada con todas sus relaciones
-        $monitoreo = $this->getMonitoreo(null, $entidad);
-        $seguimiento = $this->getSeguimiento(null, $entidad);
-        $supervision = $this->getSupervision(null, $entidad);
+        $monitoreo = $this->getMonitoreo(null, $entidad)->first();
+        $seguimiento = $this->getSeguimiento(null, $entidad)->first();
+        $supervision = $this->getSupervision(null, $entidad)->first();
 
-        $monitoreo = $this->calculoMonitoreo($monitoreo);
-        $seguimiento = $this->calculoSeguimiento($seguimiento);
-        $supervision = $this->calculoSupervision($supervision);
+        $monitoreo = $monitoreo ? $this->calculoMonitoreo($monitoreo) : 0;
+        $seguimiento = $seguimiento ? $this->calculoSeguimiento($seguimiento) : 0;
+        $supervision = $supervision ? $this->calculoSupervision($supervision) : 0;
 
         return response()->json(
             compact(
