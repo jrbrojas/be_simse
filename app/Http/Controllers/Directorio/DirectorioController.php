@@ -37,6 +37,7 @@ class DirectorioController extends Controller
                 'historial_responsables.responsable',
             ])
             ->when(request()->get("q"), function ($query, $search) {
+                $search = strtolower($search);
                 $query->where(
                     fn($q) => $q
                         ->whereHas('entidad', function ($qe) use ($search) {
