@@ -7,8 +7,8 @@ use App\Http\Controllers\Evaluacion\Traits\Calculo;
 use App\Models\Monitoreo\Monitoreo;
 use App\Models\Seguimiento\Seguimiento;
 use App\Models\Supervision\Supervision;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class ResumenController extends Controller
