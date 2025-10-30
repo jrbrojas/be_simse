@@ -137,12 +137,18 @@ class ResumenController extends Controller
         $seguimiento = $this->getSeguimiento($categoria);
         $supervision = $this->getSupervision($categoria);
 
-        $grouped = $monitoreo
-            ->merge($seguimiento)
-            ->merge($supervision)
-            ->values()
+        /** @var Collection<int,Monitoreo|Supervision|Seguimiento> $grouped */
+        $grouped = collect(
+            array_merge(
+                $monitoreo->all(),
+                $seguimiento->all(),
+                $supervision->all(),
+            )
+        );
+
+        $grouped = $grouped
             ->groupBy('entidad_id')
-            ->map(function (Collection $item) {
+            ->map(function (Collection $item, $i) {
                 /** @var Collection<int,Monitoreo|Supervision|Seguimiento> $item */
                 $monitoreo = $item->where(fn($i) => $i instanceof Monitoreo)->first();
                 $seguimiento = $item->where(fn($i) => $i instanceof Seguimiento)->first();
@@ -165,8 +171,6 @@ class ResumenController extends Controller
                 ];
                 return $entidad;
             });
-        ;
-
         return response()->json($grouped->values());
     }
 }
