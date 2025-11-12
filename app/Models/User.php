@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,18 +15,17 @@ class User extends Authenticatable implements JWTSubject
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    public $timestamps = false;
-
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'nombre',
+        'name',
         'email',
         'password',
-        'role_id'
+        'role_id',
+        'avatar',
     ];
 
     /**
@@ -34,7 +35,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $hidden = [
         'password',
-        //'remember_token',
+        'remember_token',
     ];
 
     /**
@@ -45,9 +46,15 @@ class User extends Authenticatable implements JWTSubject
     protected function casts(): array
     {
         return [
-            //'email_verified_at' => 'datetime',
+            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function scopeSearch(Builder $query, $value)
+    {
+        $query->where('name', 'ilike', "%{$value}%")
+            ->orWhere('email', 'ilike', "%{$value}%");
     }
 
     /**
@@ -79,4 +86,11 @@ class User extends Authenticatable implements JWTSubject
             ],
         ];
     }
+
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
 }

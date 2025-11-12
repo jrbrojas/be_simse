@@ -2,43 +2,79 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Escenario;
 use App\Models\User;
-use App\Http\Requests\UserStoreRequest;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index()
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
     {
-        return User::all();
+        $usuarios = User::with('role')->search($request['query'])->orderBy('name')->get();
+        return response()->json([
+            'list' => $usuarios,
+            'total' => $usuarios->count(),
+        ]);
     }
 
-    public function store(UserStoreRequest $request)
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
-        $data = $request->all();
-        unset($data['password_confirmation']);
-        $entidad = new User();
-        $entidad->fill($data);
-        $entidad->save();
-        return $entidad;
+        $data = $request->validate([
+            'role_id' => 'required|exists:roles,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'sometimes|string|min:5',
+            'password_confirmation' => 'sometimes|required_with:password|same:password',
+        ]);
+
+        User::create($data);
+
+        return response()->json([
+            'message' => 'Usuario credo exitoasamente!'
+        ]);
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show(User $usuario)
     {
         return $usuario;
     }
 
-    public function update(UserStoreRequest $request, User $usuario)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, User $usuario)
     {
-        $data = $request->all();
-        unset($data['password_confirmation']);
+        $data = $request->validate([
+            'role_id' => 'required|exists:roles,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $usuario->id,
+            'password' => 'sometimes|nullable|string|min:5',
+            'password_confirmation' => 'sometimes|required_with:password|same:password',
+        ]);
+
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
+
         $usuario->update($data);
-        return $usuario;
+        return response()->json(['message' => 'Usuario actualizado exitosamente!']);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(User $usuario)
     {
         $usuario->delete();
-        return $usuario;
+        return response()->json(['message' => 'Usuario eliminado exitosamente']);
     }
 }

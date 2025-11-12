@@ -32,6 +32,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
     Route::group(['middleware' => 'auth:api'], function () {
         // recurso comunes
         Route::get('/roles', [\App\Http\Controllers\RolesResponsableController::class, 'index']);
+        Route::get('/roles-usuarios', [\App\Http\Controllers\RoleController::class, 'index']);
         Route::get('/cargos', [\App\Http\Controllers\CargoController::class, 'index']);
 
         Route::get('/entidades/{entidad}/monitoreos', [\App\Http\Controllers\EntidadController::class, 'monitoreos']);

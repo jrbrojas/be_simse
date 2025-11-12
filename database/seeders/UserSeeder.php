@@ -15,18 +15,20 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $u = new User();
-        $u->name = "Admin";
-        $u->password = 'secret@1234';
-        $u->email = "admin@simse.com";
-        $u->role_id = 1;
-        $u->save();
+        User::create([
+            'role_id' => 1,
+            'avatar' => '/img/avatars/thumb-2.jpg',
+            'name' => 'Administrador',
+            'email' => 'admin@cenepred.gob.pe',
+            'password' => '$Cenepred2025$',
+        ]);
 
-        $u = new User();
-        $u->name = "Usuario";
-        $u->password = 'secret@1234';
-        $u->email = "usuario@simse.com";
-        $u->role_id = 2;
-        $u->save();
+        User::create([
+            'role_id' => 2,
+            'avatar' => '/img/avatars/thumb-1.jpg',
+            'name' => 'Usuario',
+            'email' => 'usuario@cenepred.gob.pe',
+            'password' => '$Cenepred2025$',
+        ]);
     }
 }
