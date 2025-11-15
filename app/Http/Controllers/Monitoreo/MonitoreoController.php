@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Monitoreo;
 
+use App\Exports\Monitoreo\MonitoreoPorEntidadesExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Monitoreo\RespuestaStore;
 use App\Models\Monitoreo\Monitoreo;
@@ -12,6 +13,18 @@ use Illuminate\Support\Facades\Storage;
 
 class MonitoreoController extends Controller
 {
+    public function exportarExcel()
+    {
+        $entidades = request()->query('monitoreo', []);
+        if (
+            is_array($entidades) &&
+            count($entidades) > 0
+        ) {
+            return (new MonitoreoPorEntidadesExport($entidades))->download('monitoreo.xlsx');
+        }
+        abort(404);
+    }
+
     public function guardarArchivo(?UploadedFile $file): string
     {
         if (null === $file) {

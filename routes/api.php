@@ -21,6 +21,10 @@ Route::group(['middleware' => 'api', 'prefix' => 'v1'], function () {
         '/directorio/exportar-excel',
         [\App\Http\Controllers\Directorio\DirectorioController::class, 'exportarExcel'],
     )->name("directorio.exportar-excel");
+    Route::get(
+        '/monitoreo/exportar-excel',
+        [\App\Http\Controllers\Monitoreo\MonitoreoController::class, 'exportarExcel'],
+    )->name("monitoreo.exportar-excel");
 
     // para las tablas
     Route::get('/monitoreo/tabla', [\App\Http\Controllers\Monitoreo\MonitoreoController::class, 'tabla']);
